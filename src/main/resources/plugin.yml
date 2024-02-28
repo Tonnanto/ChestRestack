@@ -1,0 +1,4 @@
+name: ChestRestack
+version: '${version}'
+main: de.stamme.chestrestack.ChestRestack
+api-version: '1.20'

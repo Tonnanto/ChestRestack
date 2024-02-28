@@ -1,0 +1,11 @@
+# Use this file for custom messages and custom formatting
+# To customize a message, uncomment it and all its parent keys. Then change its value.
+# Default values for all available languages can be found here: https://github.com/Tonnanto/ChestRestack/tree/main/src/main/resources/lang
+
+
+#generic:
+#  prefix: "&6ChestRestack &8>&f "
+#  usage: "Usage: {0}"
+#  unknown-command: "The command &6{0}&f does not exist."
+#  no-permission: "You do not have &6permission&f to do that."
+#  player-not-found: "The player &6{0}&f could not be found."
