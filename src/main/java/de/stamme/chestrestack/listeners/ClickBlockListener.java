@@ -12,6 +12,7 @@ import org.bukkit.inventory.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK;
 
@@ -28,7 +29,6 @@ public class ClickBlockListener implements Listener {
 
         if (!event.getAction().equals(RIGHT_CLICK_BLOCK)) return;
         // Player right-clicked
-        // Player right-clicked
 
         if (!(block.getState() instanceof InventoryHolder)) return;
         // The clicked block has an inventory
@@ -39,58 +39,74 @@ public class ClickBlockListener implements Listener {
         // Only handle the main hand interaction (the event is called twice - once for each hand)
         if (!Objects.equals(event.getHand(), EquipmentSlot.HAND)) return;
 
-        event.setCancelled(true);
-        handleChestClick(event.getPlayer(), ((InventoryHolder) block.getState()).getInventory(), Config.getSortInventory());
+        Inventory inventory = ((InventoryHolder) block.getState()).getInventory();
+
+        switch (inventory.getType()) {
+            case CHEST:
+            case BARREL:
+            case SHULKER_BOX:
+            case ENDER_CHEST:
+            case HOPPER:
+            case DISPENSER:
+            case DROPPER:
+            case CHISELED_BOOKSHELF:
+                handleChestClick(event.getPlayer(), inventory, Config.getSortInventory());
+            case SMOKER:
+            case BLAST_FURNACE:
+            case FURNACE:
+                if (inventory instanceof FurnaceInventory) {
+                    handleFurnaceClick(event.getPlayer(), (FurnaceInventory) inventory);
+                }
+                break;
+            case BREWING:
+            default: break;
+        }
     }
 
     private void handleChestClick(Player player, Inventory chestInventory, boolean sortChest) {
-
-        Inventory playerInventory = player.getInventory();
-
-        // Find item stacks to move to chest
-        List<ItemStack> itemsToMove = new ArrayList<>();
-        for (int i = 0; i < playerInventory.getStorageContents().length; i++) {
-            ItemStack itemStack = playerInventory.getStorageContents()[i];
-            if (itemStack == null) continue;
-            if (chestInventory.contains(itemStack.getType())) {
-                itemsToMove.add(itemStack);
-            }
-        }
-//        ChestRestack.log("Items to move: " + itemsToMove.stream().map(ItemStack::toString).collect(Collectors.joining()));
-
-        // Stack items together
-        itemsToMove = stackify(itemsToMove, true);
-        int numberOfItemsToMove = itemsToMove.stream().map(ItemStack::getAmount).reduce(Integer::sum).orElse(0);
-
-//        ChestRestack.log("Items to move: " + itemsToMove.stream().map(ItemStack::toString).collect(Collectors.joining()));
-
-        // Remove items from player inventory and move to container inventory
+        PlayerInventory playerInventory = player.getInventory();
+        ItemStack[] playerInventoryContents = playerInventory.getStorageContents().clone();
         int itemsNotMoved = 0;
-        for (ItemStack itemStack : itemsToMove) {
+        boolean didInventorySort = false;
+
+        // Sort the chest before to get space
+        if (sortChest) {
+            didInventorySort = sortInventory(chestInventory);
+        }
+
+        // Find item stacks to move to the chest
+        Set<Material> materialsToMove = Arrays.stream(playerInventory.getStorageContents()).filter(Objects::nonNull).map(ItemStack::getType).filter(chestInventory::contains).collect(Collectors.toSet());
+        Map<Integer, ItemStack> itemsToMove = findItemsToMove(playerInventory, materialsToMove);
+        int numberOfItemsToMove = itemsToMove.values().stream().map(ItemStack::getAmount).reduce(Integer::sum).orElse(0);
+
+        // Update player inventory contents
+        for (Map.Entry<Integer, ItemStack> entry : itemsToMove.entrySet()) {
             // remove from player inventory
-            playerInventory.remove(itemStack.getType());
+            playerInventoryContents[entry.getKey()] = null;
 
             // add to container inventory
-            Map<Integer, ItemStack> itemsToReturn = chestInventory.addItem(itemStack);
-//            ChestRestack.log("Items to return: " + itemsToReturn.values().stream().map(ItemStack::toString).collect(Collectors.joining()));
+            Map<Integer, ItemStack> itemsToReturn = chestInventory.addItem(entry.getValue());
 
-            if (!itemsToReturn.isEmpty()) {
+            if (itemsToReturn.values().stream().findFirst().isPresent()) {
                 // return items to player that did not fit
-                itemsNotMoved += itemsToReturn.values().stream().map(ItemStack::getAmount).reduce(Integer::sum).orElse(0);
-                playerInventory.addItem(itemsToReturn.get(0));
+                playerInventoryContents[entry.getKey()] = itemsToReturn.values().stream().findFirst().get();
+                itemsNotMoved += itemsToReturn.values().stream().findFirst().get().getAmount();
             }
         }
 
-        // Sort chest inventory
+        // update player inventory
+        playerInventory.setStorageContents(playerInventoryContents);
+
+        // Sort the chest after to clean up
         if (sortChest) {
-            sortInventory(chestInventory);
+            didInventorySort = sortInventory(chestInventory) || didInventorySort;
         }
 
         // Send message
         int itemsMoved = numberOfItemsToMove - itemsNotMoved;
 
         if (itemsMoved + itemsNotMoved == 0) {
-            if (sortChest) {
+            if (didInventorySort) {
                 ChestRestack.sendActionMessage(player, "Chest sorted");
             } else {
                 ChestRestack.sendActionMessage(player, "No items to move");
@@ -108,43 +124,187 @@ public class ClickBlockListener implements Listener {
         }
     }
 
-    private void sortInventory(Inventory inventory) {
-        List<ItemStack> items = Arrays.stream(inventory.getStorageContents()).toList();
-        List<ItemStack> sortedItems = stackify(items, false);
-        sortedItems.sort(Comparator.comparing(i -> i.getType().name()));
+    private void handleFurnaceClick(Player player, FurnaceInventory furnaceInventory) {
+        PlayerInventory playerInventory = player.getInventory();
+        ItemStack[] playerInventoryContents = playerInventory.getStorageContents().clone();
 
-        inventory.setStorageContents(sortedItems.toArray(new ItemStack[inventory.getStorageContents().length]));
+        // Get current fuel and smelting material
+        Material fuelMaterial = null;
+        Material smeltMaterial = null;
+
+        if (furnaceInventory.getFuel() != null) {
+            fuelMaterial = furnaceInventory.getFuel().getType();
+        }
+        if (furnaceInventory.getSmelting() != null) {
+            smeltMaterial = furnaceInventory.getSmelting().getType();
+        }
+        if (fuelMaterial == null) {
+            fuelMaterial = Material.COAL; // TODO Get preferred fuel material from config
+        }
+
+
+        // MOVE FUEL
+        // Find fuel item stacks to move to the furnace
+        Set<Material> fuelMaterialsToMove = new HashSet<>(List.of(fuelMaterial));
+        Map<Integer, ItemStack> fuelToMove = findItemsToMove(playerInventory, fuelMaterialsToMove);
+
+        int numberOfFuelToMove = fuelToMove.values().stream().map(ItemStack::getAmount).reduce(Integer::sum).orElse(0);
+        int fuelNotMoved = 0;
+
+        for (Map.Entry<Integer, ItemStack> entry : fuelToMove.entrySet()) {
+            // remove from player inventory
+            playerInventoryContents[entry.getKey()] = null;
+
+            // add to fuel slot
+            ItemStack furnaceFuelItem = furnaceInventory.getFuel();
+            if (furnaceFuelItem == null) {
+                furnaceInventory.setFuel(entry.getValue());
+            } else if (furnaceFuelItem.getType() == entry.getValue().getType()) {
+                List<ItemStack> fuelItems = stackify(List.of(furnaceFuelItem, entry.getValue()));
+                furnaceInventory.setFuel(fuelItems.get(0));
+                if (fuelItems.size() > 1) {
+                    playerInventoryContents[entry.getKey()] = fuelItems.get(1);
+                    fuelNotMoved += fuelItems.get(1).getAmount();
+                }
+            }
+        }
+
+        // update player inventory
+        playerInventory.setStorageContents(playerInventoryContents);
+
+
+        int numberOfItemsToMove = 0;
+        int itemsNotMoved = 0;
+        if (smeltMaterial != null) {
+            // MOVE SMELT ITEM
+            // Find smelt item stacks to move to the furnace
+            Set<Material> smeltMaterialsToMove = new HashSet<>(List.of(smeltMaterial));
+            Map<Integer, ItemStack> itemsToMove = findItemsToMove(playerInventory, smeltMaterialsToMove);
+
+            numberOfItemsToMove = itemsToMove.values().stream().map(ItemStack::getAmount).reduce(Integer::sum).orElse(0);
+
+            for (Map.Entry<Integer, ItemStack> entry : itemsToMove.entrySet()) {
+                // remove from player inventory
+                playerInventoryContents[entry.getKey()] = null;
+
+                // add to smelt slot
+                ItemStack furnaceSmeltItem = furnaceInventory.getSmelting();
+                if (furnaceSmeltItem == null) {
+                    furnaceInventory.setSmelting(entry.getValue());
+                } else if (furnaceSmeltItem.getType() == entry.getValue().getType()) {
+                    List<ItemStack> smeltItems = stackify(List.of(furnaceSmeltItem, entry.getValue()));
+                    furnaceInventory.setSmelting(smeltItems.get(0));
+                    if (smeltItems.size() > 1) {
+                        playerInventoryContents[entry.getKey()] = smeltItems.get(1);
+                        itemsNotMoved += smeltItems.get(1).getAmount();
+                    }
+                }
+            }
+
+            // update player inventory
+            playerInventory.setStorageContents(playerInventoryContents);
+        }
+
+
+        // Send message
+        int fuelMoved = numberOfFuelToMove - fuelNotMoved;
+        int itemsMoved = numberOfItemsToMove - itemsNotMoved;
+
+        if (fuelMoved + itemsMoved == 0) {
+            ChestRestack.sendActionMessage(player, "Nothing to add");
+        } else {
+            if (fuelMoved > 0 && itemsMoved > 0) {
+                ChestRestack.sendActionMessage(player, "Fuel and items added");
+            } else if (fuelMoved > 0) {
+                ChestRestack.sendActionMessage(player, "Fuel added");
+            } else if (itemsMoved > 0) {
+                ChestRestack.sendActionMessage(player, "Items added");
+            }
+        }
     }
 
-    private List<ItemStack> stackify(List<ItemStack> items, boolean exceedMaxStackSize) {
-        List<ItemStack> result = new ArrayList<>();
-        for (ItemStack itemStack : items) { // iterate through the list of items to 'merge'
+    private Map<Integer, ItemStack> findItemsToMove(PlayerInventory inventory, Set<Material> materialsToMove) {
+        Map<Integer, ItemStack> itemsToMove = new HashMap<>();
+        for (int i = 0; i < inventory.getStorageContents().length; i++) {
+            ItemStack itemStack = inventory.getStorageContents()[i];
             if (itemStack == null) continue;
-            int index = getNextSlotToStack(result, itemStack, exceedMaxStackSize); // get the first similar item, if it exists
-            if (index > -1) { // if there is a similar stack, figure out how much to add
+            if (materialsToMove.contains(itemStack.getType())) {
+                itemsToMove.put(i, itemStack);
+            }
+        }
+        return itemsToMove;
+    }
+
+    private boolean sortInventory(Inventory inventory) {
+        ItemStack[] inventoryBefore = inventory.getStorageContents().clone();
+
+        // Stack items together
+        List<ItemStack> sortedItems = stackify(Arrays.stream(inventory.getStorageContents()).toList());
+
+        // Sort by name
+        sortedItems.sort(Comparator.comparing(i -> i.getType().name()));
+
+        // Update inventory contents
+        ItemStack[] inventoryAfter = sortedItems.toArray(new ItemStack[inventory.getStorageContents().length]);
+        inventory.setStorageContents(inventoryAfter);
+
+        return !isInventoryEqual(inventoryBefore, inventoryAfter);
+    }
+
+    private boolean isInventoryEqual(ItemStack[] inv1, ItemStack[] inv2) {
+        if (inv1 == null || inv2 == null || inv1.length != inv2.length) {
+            return false;
+        }
+
+        // Iterate through each ItemStack in both lists
+        for (int i = 0; i < inv1.length; i++) {
+
+            // empty slot in both inventories
+            if (inv1[i] == null && inv2[i] == null)
+                continue;
+
+            // empty slot in ONE inventory
+            if (inv1[i] == null || inv2[i] == null)
+                return false;
+
+            // compare item stacks
+            if (!inv1[i].equals(inv2[i])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private List<ItemStack> stackify(List<ItemStack> items) {
+        List<ItemStack> result = new ArrayList<>();
+        // iterate through the list of items to 'merge'
+        for (ItemStack itemStack : items) {
+            if (itemStack == null) continue;
+            // get the first similar non-full item stack if it exists
+            int index = getNextSlotToStack(result, itemStack);
+            if (index > -1) {
+                // if there is a similar stack, figure out how much to add
                 ItemStack itemStackToAddTo = result.get(index);
                 int amount = itemStackToAddTo.getAmount();
-                if (!exceedMaxStackSize && amount + itemStack.getAmount() > itemStack.getMaxStackSize()) {
+                if (amount + itemStack.getAmount() > itemStack.getMaxStackSize()) {
                     itemStackToAddTo.setAmount(itemStack.getMaxStackSize());
                     itemStack.setAmount(itemStack.getAmount() + amount - itemStack.getMaxStackSize());
                     result.add(itemStack);
                 } else {
                     itemStackToAddTo.setAmount(amount + itemStack.getAmount());
                 }
-//                result.set(index, itemStackToAddTo);
-            } else { // else just add the stack
+            } else {
+                // else just add as a new stack
                 result.add(itemStack);
             }
         }
         return result;
     }
 
-    private int getNextSlotToStack(List<ItemStack> items, ItemStack input, boolean exceedMaxStackSize) {
+    private int getNextSlotToStack(List<ItemStack> items, ItemStack input) {
         for (int i = 0; i < items.size(); i++) {
-            if (exceedMaxStackSize && items.get(i).isSimilar(input)) {
-                return i;
-            }
-            if (!exceedMaxStackSize && items.get(i).isSimilar(input) && items.get(i).getAmount() < items.get(i).getMaxStackSize()) {
+            if (items.get(i).isSimilar(input) && items.get(i).getAmount() < items.get(i).getMaxStackSize()) {
                 return i;
             }
         }
