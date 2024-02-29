@@ -1,14 +1,14 @@
 package de.stamme.chestrestack.listeners;
 
 import de.stamme.chestrestack.ChestRestack;
+import de.stamme.chestrestack.config.Config;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -28,21 +28,27 @@ public class ClickBlockListener implements Listener {
 
         if (!event.getAction().equals(RIGHT_CLICK_BLOCK)) return;
         // Player right-clicked
+        // Player right-clicked
 
         if (!(block.getState() instanceof InventoryHolder)) return;
         // The clicked block has an inventory
 
+        // do not open inventory
         event.setCancelled(true);
-        handleChestClick(event.getPlayer(), ((InventoryHolder) block.getState()).getInventory(), true);
+
+        // Only handle the main hand interaction (the event is called twice - once for each hand)
+        if (!Objects.equals(event.getHand(), EquipmentSlot.HAND)) return;
+
+        event.setCancelled(true);
+        handleChestClick(event.getPlayer(), ((InventoryHolder) block.getState()).getInventory(), Config.getSortInventory());
     }
 
     private void handleChestClick(Player player, Inventory chestInventory, boolean sortChest) {
 
         Inventory playerInventory = player.getInventory();
 
-        // Key = position at inventory
+        // Find item stacks to move to chest
         List<ItemStack> itemsToMove = new ArrayList<>();
-
         for (int i = 0; i < playerInventory.getStorageContents().length; i++) {
             ItemStack itemStack = playerInventory.getStorageContents()[i];
             if (itemStack == null) continue;
@@ -52,11 +58,13 @@ public class ClickBlockListener implements Listener {
         }
 //        ChestRestack.log("Items to move: " + itemsToMove.stream().map(ItemStack::toString).collect(Collectors.joining()));
 
+        // Stack items together
         itemsToMove = stackify(itemsToMove, true);
         int numberOfItemsToMove = itemsToMove.stream().map(ItemStack::getAmount).reduce(Integer::sum).orElse(0);
 
 //        ChestRestack.log("Items to move: " + itemsToMove.stream().map(ItemStack::toString).collect(Collectors.joining()));
 
+        // Remove items from player inventory and move to container inventory
         int itemsNotMoved = 0;
         for (ItemStack itemStack : itemsToMove) {
             // remove from player inventory
@@ -73,7 +81,6 @@ public class ClickBlockListener implements Listener {
             }
         }
 
-
         // Sort chest inventory
         if (sortChest) {
             sortInventory(chestInventory);
@@ -83,7 +90,11 @@ public class ClickBlockListener implements Listener {
         int itemsMoved = numberOfItemsToMove - itemsNotMoved;
 
         if (itemsMoved + itemsNotMoved == 0) {
-            ChestRestack.sendMessage(player, "No items to move");
+            if (sortChest) {
+                ChestRestack.sendActionMessage(player, "Chest sorted");
+            } else {
+                ChestRestack.sendActionMessage(player, "No items to move");
+            }
         } else {
             String message = "";
             if (itemsMoved > 0) {
@@ -93,18 +104,16 @@ public class ClickBlockListener implements Listener {
                 if (itemsMoved > 0) message += " - ";
                 message += String.format("§cNo space for %s items", itemsNotMoved);
             }
-            ChestRestack.sendMessage(player, message);
-
+            ChestRestack.sendActionMessage(player, message);
         }
-
     }
 
     private void sortInventory(Inventory inventory) {
         List<ItemStack> items = Arrays.stream(inventory.getStorageContents()).toList();
-        items = stackify(items, false);
-        items.sort(Comparator.comparing(i -> i.getType().name()));
+        List<ItemStack> sortedItems = stackify(items, false);
+        sortedItems.sort(Comparator.comparing(i -> i.getType().name()));
 
-        inventory.setStorageContents(items.toArray(new ItemStack[0]));
+        inventory.setStorageContents(sortedItems.toArray(new ItemStack[inventory.getStorageContents().length]));
     }
 
     private List<ItemStack> stackify(List<ItemStack> items, boolean exceedMaxStackSize) {
@@ -122,7 +131,7 @@ public class ClickBlockListener implements Listener {
                 } else {
                     itemStackToAddTo.setAmount(amount + itemStack.getAmount());
                 }
-                result.set(index, itemStackToAddTo);
+//                result.set(index, itemStackToAddTo);
             } else { // else just add the stack
                 result.add(itemStack);
             }

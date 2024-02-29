@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import de.themoep.minedown.MineDown;
@@ -36,6 +37,7 @@ public final class ChestRestack extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        HandlerList.unregisterAll(getPlugin());
     }
 
     /**

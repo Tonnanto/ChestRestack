@@ -4,3 +4,4 @@
 # You can delete this file to regenerate the default config on server reload.
 
 
+sort-inventory: true

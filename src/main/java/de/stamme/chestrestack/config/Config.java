@@ -183,4 +183,13 @@ public class Config {
     public static int getMinecraftItemsLocaleUpdatePeriod() {
         return 7;
     }
+
+    /**
+     * Retrieve the "sort-inventory" config flag.
+     *
+     * @return boolean
+     */
+    public static boolean getSortInventory() {
+        return config.getBoolean("sort-inventory", true);
+    }
 }
