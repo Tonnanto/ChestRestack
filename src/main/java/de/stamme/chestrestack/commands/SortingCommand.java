@@ -51,26 +51,18 @@ public class SortingCommand extends ChestRestackCommand {
         }
 
         if (params.isEmpty()) {
-            if (preferences.isSortingEnabled()) {
-                preferences.setSortingEnabled(false);
-                PlayerPreferences.savePreferencesForPlayer(preferences, player);
-                ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.sorting.disabled"));
-            } else {
-                preferences.setSortingEnabled(true);
-                PlayerPreferences.savePreferencesForPlayer(preferences, player);
-                ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.sorting.enabled"));
-            }
-            return;
-        }
-
-        if (params.get(0).equalsIgnoreCase("enable")) {
-            preferences.setSortingEnabled(true);
-            PlayerPreferences.savePreferencesForPlayer(preferences, player);
-            ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.sorting.enabled"));
+            // Toggle sorting if no argument was given
+            enableSorting(!preferences.isSortingEnabled(), player, preferences);
+        } else if (params.get(0).equalsIgnoreCase("enable")) {
+            enableSorting(true, player, preferences);
         } else if (params.get(0).equalsIgnoreCase("disable")) {
-            preferences.setSortingEnabled(false);
-            PlayerPreferences.savePreferencesForPlayer(preferences, player);
-            ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.sorting.disabled"));
+            enableSorting(false, player, preferences);
         }
+    }
+
+    private void enableSorting(boolean enable, Player player, PlayerPreferences preferences) {
+        preferences.setSortingEnabled(enable);
+        PlayerPreferences.savePreferencesForPlayer(preferences, player);
+        ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.sorting." + (enable ? "enabled" : "disabled")));
     }
 }

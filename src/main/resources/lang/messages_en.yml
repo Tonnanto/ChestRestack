@@ -16,3 +16,6 @@ commands:
   clickmode:
     shift-right: "Click mode has been set to &bshift-right&f"
     shift-left: "Click mode has been set to &bshift-left&f"
+  movefromhotbar:
+    enabled: "Moving items from hotbar has been &aenabled&f"
+    disabled: "Moving items from hotbar has been &cdisabled&f"

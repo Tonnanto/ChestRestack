@@ -47,7 +47,7 @@ public class ClickBlockListener implements Listener {
             case FURNACE:
                 if (!preferences.isMoveToFurnaces()) break;
                 if (!(inventory instanceof FurnaceInventory)) break;
-                handleFurnaceClick(event.getPlayer(), (FurnaceInventory) inventory);
+                handleFurnaceClick(event.getPlayer(), (FurnaceInventory) inventory, preferences);
                 break;
             case BREWING:
             default: break;
@@ -102,7 +102,7 @@ public class ClickBlockListener implements Listener {
 
         // Find item stacks to move to the chest // TODO: Exclude Tools, Armor, Hotbar if preferences say so
         Set<Material> materialsToMove = Arrays.stream(playerInventory.getStorageContents()).filter(Objects::nonNull).map(ItemStack::getType).filter(chestInventory::contains).collect(Collectors.toSet());
-        Map<Integer, ItemStack> itemsToMove = findItemsToMove(playerInventory, materialsToMove);
+        Map<Integer, ItemStack> itemsToMove = findItemsToMove(playerInventory, materialsToMove, preferences);
         int numberOfItemsToMove = itemsToMove.values().stream().map(ItemStack::getAmount).reduce(Integer::sum).orElse(0);
 
         // Update player inventory contents
@@ -150,7 +150,7 @@ public class ClickBlockListener implements Listener {
         }
     }
 
-    private void handleFurnaceClick(Player player, FurnaceInventory furnaceInventory) {
+    private void handleFurnaceClick(Player player, FurnaceInventory furnaceInventory, PlayerPreferences preferences) {
         PlayerInventory playerInventory = player.getInventory();
         ItemStack[] playerInventoryContents = playerInventory.getStorageContents().clone();
 
@@ -172,7 +172,7 @@ public class ClickBlockListener implements Listener {
         // MOVE FUEL
         // Find fuel item stacks to move to the furnace
         Set<Material> fuelMaterialsToMove = new HashSet<>(List.of(fuelMaterial));
-        Map<Integer, ItemStack> fuelToMove = findItemsToMove(playerInventory, fuelMaterialsToMove);
+        Map<Integer, ItemStack> fuelToMove = findItemsToMove(playerInventory, fuelMaterialsToMove, preferences);
 
         int numberOfFuelToMove = fuelToMove.values().stream().map(ItemStack::getAmount).reduce(Integer::sum).orElse(0);
         int fuelNotMoved = 0;
@@ -205,7 +205,7 @@ public class ClickBlockListener implements Listener {
             // MOVE SMELT ITEM
             // Find smelt item stacks to move to the furnace
             Set<Material> smeltMaterialsToMove = new HashSet<>(List.of(smeltMaterial));
-            Map<Integer, ItemStack> itemsToMove = findItemsToMove(playerInventory, smeltMaterialsToMove);
+            Map<Integer, ItemStack> itemsToMove = findItemsToMove(playerInventory, smeltMaterialsToMove, preferences);
 
             numberOfItemsToMove = itemsToMove.values().stream().map(ItemStack::getAmount).reduce(Integer::sum).orElse(0);
 
@@ -249,9 +249,11 @@ public class ClickBlockListener implements Listener {
         }
     }
 
-    private Map<Integer, ItemStack> findItemsToMove(PlayerInventory inventory, Set<Material> materialsToMove) {
+    private Map<Integer, ItemStack> findItemsToMove(PlayerInventory inventory, Set<Material> materialsToMove, PlayerPreferences preferences) {
         Map<Integer, ItemStack> itemsToMove = new HashMap<>();
-        for (int i = 0; i < inventory.getStorageContents().length; i++) {
+        int startInventoryIndex = 0;
+        if (!preferences.isMoveFromHotbar()) startInventoryIndex = 9;
+        for (int i = startInventoryIndex; i < inventory.getStorageContents().length; i++) {
             ItemStack itemStack = inventory.getStorageContents()[i];
             if (itemStack == null) continue;
             if (materialsToMove.contains(itemStack.getType())) {

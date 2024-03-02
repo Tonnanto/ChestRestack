@@ -11,29 +11,31 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.stamme.chestrestack.PlayerPreferences.ClickMode.*;
+public class MoveFromHotbarCommand extends ChestRestackCommand {
 
-public class ClickModeCommand extends ChestRestackCommand {
-
-    protected ClickModeCommand() {
-        super("clickmode");
+    protected MoveFromHotbarCommand() {
+        super("movefromhotbar");
     }
 
     @Override
     public void complete(@NotNull ChestRestack plugin, @NotNull CommandSender sender, @NotNull String alias, @NotNull @Unmodifiable List<String> params, @NotNull List<String> suggestions) {
-        if (params.size() > 1 || !(sender instanceof Player) || !sender.hasPermission(getPermission())) {
+        if (params.size() > 1 || !(sender instanceof Player player) || !sender.hasPermission(getPermission())) {
             return;
         }
 
-        // chestrestack clickmode ...
+        PlayerPreferences preferences = plugin.getPlayerPreference(player.getUniqueId());
+
+        // chestrestack movefromhotbar ...
         List<String> possible = new ArrayList<>();
 
-        for (PlayerPreferences.ClickMode mode : PlayerPreferences.ClickMode.values()) {
-            possible.add(mode.toString());
+        if (preferences.isMoveFromHotbar()) {
+            possible.add("false");
+        } else {
+            possible.add("true");
         }
-
         suggestByParameter(possible.stream(), suggestions, params.get(params.size() - 1));
     }
+
 
     @Override
     public void evaluate(@NotNull ChestRestack plugin, @NotNull CommandSender sender, @NotNull String alias, @NotNull @Unmodifiable List<String> params) {
@@ -44,18 +46,18 @@ public class ClickModeCommand extends ChestRestackCommand {
         PlayerPreferences preferences = plugin.getPlayerPreference(player.getUniqueId());
 
         if (params.isEmpty()) {
-            // Toggle click mode between shift-left and shift-right if no argument was given
-            setClickMode(preferences.getClickMode() == SHIFT_LEFT ? SHIFT_RIGHT : SHIFT_LEFT, player, preferences);
-        } else if (params.get(0).equalsIgnoreCase(SHIFT_LEFT.toString())) {
-            setClickMode(SHIFT_LEFT, player, preferences);
-        } else if (params.get(0).equalsIgnoreCase(SHIFT_RIGHT.toString())) {
-            setClickMode(SHIFT_RIGHT, player, preferences);
+            // Toggle movefromhotbar if no argument was given
+            enableMoveFromHotbar(!preferences.isMoveFromHotbar(), player, preferences);
+        } else if (params.get(0).equalsIgnoreCase("true")) {
+            enableMoveFromHotbar(true, player, preferences);
+        } else if (params.get(0).equalsIgnoreCase("false")) {
+            enableMoveFromHotbar(false, player, preferences);
         }
     }
 
-    private void setClickMode(PlayerPreferences.ClickMode mode, Player player, PlayerPreferences preferences) {
-        preferences.setClickMode(mode);
+    private void enableMoveFromHotbar(boolean enable, Player player, PlayerPreferences preferences) {
+        preferences.setMoveFromHotbar(enable);
         PlayerPreferences.savePreferencesForPlayer(preferences, player);
-        ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.clickmode." + mode));
+        ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.movefromhotbar." + (enable ? "enabled" : "disabled")));
     }
 }
