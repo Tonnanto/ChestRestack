@@ -5,3 +5,7 @@
 
 
 sort-inventory: true
+
+# whether new updates should be announced to admins and in the console.
+# updating to the newest version is always recommended unless the new version is not compatible with your server.
+check-for-updates: true

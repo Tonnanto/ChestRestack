@@ -20,6 +20,7 @@ import java.util.logging.Level;
 public final class ChestRestack extends JavaPlugin {
     private static ChestRestack plugin;
     private static final int spigotMCID = 420; // TODO Adjust!
+    private static final int spigotMCID = 87972; // TODO Adjust!
 
     @Override
     public void onEnable() {

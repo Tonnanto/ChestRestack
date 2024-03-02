@@ -41,7 +41,7 @@ public class Config {
             byte[] encoded = Files.readAllBytes(Paths.get(configPath));
             configString = new String(encoded, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            e.printStackTrace();
+            ChestRestack.log(Level.SEVERE, e.getMessage());
             ChestRestack.log(Level.SEVERE, "Failed to read old config file");
         }
 
@@ -85,7 +85,7 @@ public class Config {
             byte[] encoded = Files.readAllBytes(Paths.get(configPath));
             configString = new String(encoded, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            e.printStackTrace();
+            ChestRestack.log(Level.SEVERE, e.getMessage());
             ChestRestack.log(Level.SEVERE, "Failed to read new config.yml file");
         }
 
@@ -119,7 +119,7 @@ public class Config {
             fw.close();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            ChestRestack.log(Level.SEVERE, e.getMessage());
             ChestRestack.log(Level.SEVERE, "Failed to write to new config.yml file");
             return;
         }
