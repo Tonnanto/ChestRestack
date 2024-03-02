@@ -3,11 +3,14 @@ package de.stamme.chestrestack.commands;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import de.stamme.chestrestack.ChestRestack;
+import de.stamme.chestrestack.PlayerPreferences;
+import de.stamme.chestrestack.config.Config;
 import de.stamme.chestrestack.config.MessagesConfig;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -18,7 +21,12 @@ import java.util.stream.Stream;
 public class ChestRestackCommandRouter implements CommandExecutor, TabCompleter {
     @Unmodifiable
     private static final List<ChestRestackCommand> COMMANDS = ImmutableList.of(
-
+            new HelpCommand(),
+            new EnableCommand(),
+            new DisableCommand(),
+            new ReloadCommand(),
+            new SortingCommand(),
+            new ClickModeCommand()
     );
 
     @NotNull
@@ -87,8 +95,20 @@ public class ChestRestackCommandRouter implements CommandExecutor, TabCompleter 
             return suggestions;
         }
 
+        PlayerPreferences preferences;
+        if (sender instanceof Player) {
+            preferences = plugin.getPlayerPreference(((Player) sender).getUniqueId());
+        } else {
+            preferences = Config.getDefaultPlayerPreferences();
+        }
+
         final Stream<String> targets = ChestRestackCommand
-                .filterByPermission(sender, commands.values().stream()).map(ChestRestackCommand::getLabels)
+                .filterByPermission(sender, commands.values().stream().filter((ChestRestackCommand cmd) -> {
+                    if (cmd instanceof EnableCommand && preferences.isEnabled()) return false;
+                    if (cmd instanceof DisableCommand && !preferences.isEnabled()) return false;
+                    if (cmd instanceof SortingCommand && !Config.getSortingEnabledGlobal()) return false;
+                    return true;
+                })).map(ChestRestackCommand::getLabels)
                 .flatMap(Collection::stream);
         ChestRestackCommand.suggestByParameter(targets, suggestions, args.length == 0 ? null : args[0]);
 

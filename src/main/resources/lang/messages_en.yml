@@ -1,6 +1,18 @@
 generic:
-  prefix: "&6ChestRestack &8>&f "
+  prefix: "&bChestRestack &8>&f "
   usage: "Usage: {0}"
-  unknown-command: "The command &6{0}&f does not exist."
-  no-permission: "You do not have &6permission&f to do that."
-  player-not-found: "The player &6{0}&f could not be found."
+  unknown-command: "The command &b{0}&f does not exist."
+  no-permission: "You do not have &bpermission&f to do that."
+  player-not-found: "The player &b{0}&f could not be found."
+commands:
+  reload:
+    success: "ChestRestack has been successfully &breloaded&f."
+  enable: "Chest restacking has been &aenabled&f"
+  disable: "Chest restacking has been &cdisabled&f"
+  sorting:
+    enabled: "Sorting has been &aenabled&f"
+    disabled: "Sorting has been &cdisabled&f"
+    disabled-globally: "Sorting with ChestRestack has been &cdisabled&f on this server."
+  clickmode:
+    shift-right: "Click mode has been set to &bshift-right&f"
+    shift-left: "Click mode has been set to &bshift-left&f"

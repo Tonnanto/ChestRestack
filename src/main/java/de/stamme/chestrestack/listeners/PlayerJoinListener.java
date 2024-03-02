@@ -19,7 +19,6 @@ public class PlayerJoinListener implements Listener {
         // load player preferences from file - if not successful, generate new PlayerPreferences and save them to file
         if (!PlayerPreferences.loadPlayerData(player)) {
             PlayerPreferences defaultPreferences = Config.getDefaultPlayerPreferences();
-            ChestRestack.getPlugin().getPlayerPreferences().put(player.getUniqueId(), defaultPreferences);
             PlayerPreferences.savePreferencesForPlayer(defaultPreferences, player);
         }
 

@@ -51,8 +51,9 @@ public abstract class ChestRestackCommand {
         return ImmutableSet.<String>builder().add(label).addAll(alias).build();
     }
 
-    @Nullable
-    public abstract String getPermission();
+    public String getPermission() {
+        return "chestrestack.use";
+    }
 
     public abstract void evaluate(@NotNull final ChestRestack plugin,
                                   @NotNull final CommandSender sender, @NotNull final String alias,

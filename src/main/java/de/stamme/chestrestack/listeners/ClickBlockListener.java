@@ -24,7 +24,6 @@ public class ClickBlockListener implements Listener {
 
         Player player = event.getPlayer();
         PlayerPreferences preferences = ChestRestack.getPlugin().getPlayerPreference(player.getUniqueId());
-        if (preferences == null) preferences = Config.getDefaultPlayerPreferences();
 
         if (ignoreEvent(event, preferences)) return;
 
@@ -74,9 +73,11 @@ public class ClickBlockListener implements Listener {
             case SHIFT_LEFT:
                 if (!event.getPlayer().isSneaking()) return true;
                 if (!event.getAction().equals(LEFT_CLICK_BLOCK)) return true;
+                break;
             case SHIFT_RIGHT:
                 if (!event.getPlayer().isSneaking()) return true;
                 if (!event.getAction().equals(RIGHT_CLICK_BLOCK)) return true;
+                break;
         }
         // Player used correct action on block
 

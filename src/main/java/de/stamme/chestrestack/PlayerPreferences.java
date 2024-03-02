@@ -2,6 +2,7 @@ package de.stamme.chestrestack;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -15,12 +16,23 @@ import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
 public class PlayerPreferences implements Serializable {
+    @Serial
     private static final long serialVersionUID = 420L;
     public enum SortMode {
-        NAME, ID, GROUP
+        NAME, ID, GROUP;
+
+        @Override
+        public String toString() {
+            return name().replace("_", "-").toLowerCase();
+        }
     }
     public enum ClickMode {
-        SHIFT_LEFT, SHIFT_RIGHT
+        SHIFT_LEFT, SHIFT_RIGHT;
+
+        @Override
+        public String toString() {
+            return name().replace("_", "-").toLowerCase();
+        }
     }
 
     private boolean enabled;
@@ -81,6 +93,7 @@ public class PlayerPreferences implements Serializable {
      * @return whether the operation was successful
      */
     public static boolean savePreferencesForPlayer(PlayerPreferences preferences, Player player) {
+        ChestRestack.getPlugin().getPlayerPreferences().put(player.getUniqueId(), preferences);
         return preferences.saveData(filePathForUUID(player.getUniqueId()));
     }
 

@@ -16,7 +16,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import de.themoep.minedown.MineDown;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.HashMap;
@@ -56,6 +55,15 @@ public final class ChestRestack extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
         HandlerList.unregisterAll(getPlugin());
+    }
+
+    /**
+     * Reload the plugin configuration and quest generation files.
+     */
+    public void reload() {
+        Config.reload();
+        MessagesConfig.register(Config.getLocale());
+//        MinecraftLocaleConfig.register(); // TODO: Use MinecraftLocaleConfig?
     }
 
     /**
@@ -124,15 +132,6 @@ public final class ChestRestack extends JavaPlugin {
     }
 
     /**
-     * Broadcast a message formatted with MineDown.
-     *
-     * @param value The message.
-     */
-    public static void broadcastMessage(String value) {
-        getPlugin().getServer().getOnlinePlayers().forEach(player -> sendMessage(player, value));
-    }
-
-    /**
      * Send a message formatted with MineDown.
      *
      * @param sender The command sender.
@@ -192,9 +191,11 @@ public final class ChestRestack extends JavaPlugin {
      * @param uuid The player's UUID.
      * @return PlayerPreferences
      */
-    @Nullable
+    @NotNull
     public PlayerPreferences getPlayerPreference(UUID uuid) {
-        return playerPreferences.get(uuid);
+        PlayerPreferences preferences = playerPreferences.get(uuid);
+        if (preferences == null) preferences = Config.getDefaultPlayerPreferences();
+        return preferences;
     }
 
     /**
