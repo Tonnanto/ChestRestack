@@ -4,6 +4,7 @@ import de.stamme.chestrestack.commands.ChestRestackCommandRouter;
 import de.stamme.chestrestack.config.Config;
 import de.stamme.chestrestack.config.MessagesConfig;
 import de.stamme.chestrestack.listeners.ClickBlockListener;
+import de.stamme.chestrestack.listeners.PlayerJoinListener;
 import de.stamme.chestrestack.util.MetricsService;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Bukkit;
@@ -14,23 +15,39 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import de.themoep.minedown.MineDown;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public final class ChestRestack extends JavaPlugin {
     private static ChestRestack plugin;
-    private static final int spigotMCID = 420; // TODO Adjust!
+    private static String userdataPath;
     private static final int spigotMCID = 87972; // TODO Adjust!
+    private final HashMap<UUID, PlayerPreferences> playerPreferences = new HashMap<>();
 
     @Override
     public void onEnable() {
         plugin = this;
+        userdataPath = this.getDataFolder() + "/userdata";
 
         registerConfigs();
 
         // Loading commands and listeners
         registerCommands();
         registerListeners();
+
+        // create userdata directory
+        File userFile = new File(userdataPath);
+        if (!userFile.exists()) {
+            if (!userFile.mkdir()) {
+                ChestRestack.log(Level.SEVERE, String.format("Failed to create directory %s", userFile.getPath()));
+            }
+        }
 
         MetricsService.setUpMetrics();
     }
@@ -71,6 +88,7 @@ public final class ChestRestack extends JavaPlugin {
     private void registerListeners() {
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new ClickBlockListener(), this);
+        pluginManager.registerEvents(new PlayerJoinListener(), this);
     }
 
     /**
@@ -156,5 +174,35 @@ public final class ChestRestack extends JavaPlugin {
      */
     public static int getSpigotMCID() {
         return spigotMCID;
+    }
+
+    /**
+     * Retrieve the mqp of player preferences.
+     *
+     * @return Map
+     */
+    @NotNull
+    public Map<UUID, PlayerPreferences> getPlayerPreferences() {
+        return playerPreferences;
+    }
+
+    /**
+     * Retrieve a player's preferences.
+     *
+     * @param uuid The player's UUID.
+     * @return PlayerPreferences
+     */
+    @Nullable
+    public PlayerPreferences getPlayerPreference(UUID uuid) {
+        return playerPreferences.get(uuid);
+    }
+
+    /**
+     * Retrieve the userdata path.
+     *
+     * @return String
+     */
+    public static String getUserdataPath() {
+        return userdataPath;
     }
 }

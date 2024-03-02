@@ -4,8 +4,43 @@
 # You can delete this file to regenerate the default config on server reload.
 
 
-sort-inventory: true
+
+# Whether the chest will be sorted after moving items
+# Disabling this globally will disable it for all players independent of their individual preferences.
+# I only recommend disabling this if you use a different plugin for sorting of inventories.
+sorting-enabled-global: true
+
+restack-sound: true
+
+# set the locale for the plugin.
+# contact me if you would like to have your language supported. you might need to help with translations.
+# available locales:
+# en: English, de: German, es: Spanish, ru: Russian
+locale: en
 
 # whether new updates should be announced to admins and in the console.
 # updating to the newest version is always recommended unless the new version is not compatible with your server.
 check-for-updates: true
+
+
+
+# DEFAULT PLAYER PREFERENCES
+
+# Each player can overwrite their own preferences using commands
+# These are the default values the player preferences will have when they first join
+
+sorting-enabled-default: true
+
+# shift-right | shift-left
+click-mode-default: shift-right
+
+# name | id | group
+sort-mode-default: name
+
+move-from-hotbar-default: true
+
+move-tools-default: false
+
+move-armor-default: false
+
+move-to-furnace-default: true

@@ -1,6 +1,7 @@
 package de.stamme.chestrestack.listeners;
 
 import de.stamme.chestrestack.ChestRestack;
+import de.stamme.chestrestack.PlayerPreferences;
 import de.stamme.chestrestack.config.Config;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -14,32 +15,23 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.bukkit.event.block.Action.LEFT_CLICK_BLOCK;
 import static org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK;
 
 public class ClickBlockListener implements Listener {
     @EventHandler
     public void onClickBlock(@NotNull PlayerInteractEvent event) {
-        Block block = event.getClickedBlock();
 
-        if (block == null) return;
-        // Clicked a block
+        Player player = event.getPlayer();
+        PlayerPreferences preferences = ChestRestack.getPlugin().getPlayerPreference(player.getUniqueId());
+        if (preferences == null) preferences = Config.getDefaultPlayerPreferences();
 
-        if (!event.getPlayer().isSneaking()) return;
-        // Player was sneaking
+        if (ignoreEvent(event, preferences)) return;
 
-        if (!event.getAction().equals(RIGHT_CLICK_BLOCK)) return;
-        // Player right-clicked
-
-        if (!(block.getState() instanceof InventoryHolder)) return;
-        // The clicked block has an inventory
-
-        // do not open inventory
-        event.setCancelled(true);
-
-        // Only handle the main hand interaction (the event is called twice - once for each hand)
-        if (!Objects.equals(event.getHand(), EquipmentSlot.HAND)) return;
-
-        Inventory inventory = ((InventoryHolder) block.getState()).getInventory();
+        // These assertions are ensured by the above ignoreEvent method
+        assert event.getClickedBlock() != null;
+        assert event.getClickedBlock().getState() instanceof InventoryHolder;
+        Inventory inventory = ((InventoryHolder) event.getClickedBlock().getState()).getInventory();
 
         switch (inventory.getType()) {
             case CHEST:
@@ -50,31 +42,64 @@ public class ClickBlockListener implements Listener {
             case DISPENSER:
             case DROPPER:
             case CHISELED_BOOKSHELF:
-                handleChestClick(event.getPlayer(), inventory, Config.getSortInventory());
+                handleChestClick(event.getPlayer(), inventory, preferences);
             case SMOKER:
             case BLAST_FURNACE:
             case FURNACE:
-                if (inventory instanceof FurnaceInventory) {
-                    handleFurnaceClick(event.getPlayer(), (FurnaceInventory) inventory);
-                }
+                if (!preferences.isMoveToFurnaces()) break;
+                if (!(inventory instanceof FurnaceInventory)) break;
+                handleFurnaceClick(event.getPlayer(), (FurnaceInventory) inventory);
                 break;
             case BREWING:
             default: break;
         }
     }
 
-    private void handleChestClick(Player player, Inventory chestInventory, boolean sortChest) {
+    /**
+     * Used to filter events that are not supposed to trigger the restack action
+     * @param event the event is question
+     * @param preferences the player's preferences
+     * @return whether the plugin should ignore the event
+     */
+    private boolean ignoreEvent(PlayerInteractEvent event, PlayerPreferences preferences) {
+        if (!preferences.isEnabled()) return true;
+        Block block = event.getClickedBlock();
+        if (block == null) return true;
+        // Clicked a block
+
+        if (!(block.getState() instanceof InventoryHolder)) return true;
+        // The clicked block has an inventory
+
+        switch (preferences.getClickMode()) {
+            case SHIFT_LEFT:
+                if (!event.getPlayer().isSneaking()) return true;
+                if (!event.getAction().equals(LEFT_CLICK_BLOCK)) return true;
+            case SHIFT_RIGHT:
+                if (!event.getPlayer().isSneaking()) return true;
+                if (!event.getAction().equals(RIGHT_CLICK_BLOCK)) return true;
+        }
+        // Player used correct action on block
+
+        // cancel default action
+        event.setCancelled(true);
+
+        // Only handle the main hand interaction (the event is called twice - once for each hand)
+        return !Objects.equals(event.getHand(), EquipmentSlot.HAND);
+    }
+
+    private void handleChestClick(Player player, Inventory chestInventory, PlayerPreferences preferences) {
         PlayerInventory playerInventory = player.getInventory();
+        boolean sortingEnabled = Config.getSortingEnabledGlobal() && preferences.isSortingEnabled();
         ItemStack[] playerInventoryContents = playerInventory.getStorageContents().clone();
         int itemsNotMoved = 0;
         boolean didInventorySort = false;
 
         // Sort the chest before to get space
-        if (sortChest) {
+        if (sortingEnabled) {
             didInventorySort = sortInventory(chestInventory);
         }
 
-        // Find item stacks to move to the chest
+        // Find item stacks to move to the chest // TODO: Exclude Tools, Armor, Hotbar if preferences say so
         Set<Material> materialsToMove = Arrays.stream(playerInventory.getStorageContents()).filter(Objects::nonNull).map(ItemStack::getType).filter(chestInventory::contains).collect(Collectors.toSet());
         Map<Integer, ItemStack> itemsToMove = findItemsToMove(playerInventory, materialsToMove);
         int numberOfItemsToMove = itemsToMove.values().stream().map(ItemStack::getAmount).reduce(Integer::sum).orElse(0);
@@ -98,7 +123,7 @@ public class ClickBlockListener implements Listener {
         playerInventory.setStorageContents(playerInventoryContents);
 
         // Sort the chest after to clean up
-        if (sortChest) {
+        if (sortingEnabled) {
             didInventorySort = sortInventory(chestInventory) || didInventorySort;
         }
 
@@ -241,7 +266,7 @@ public class ClickBlockListener implements Listener {
         // Stack items together
         List<ItemStack> sortedItems = stackify(Arrays.stream(inventory.getStorageContents()).toList());
 
-        // Sort by name
+        // Sort by name // TODO: Use sort-mode from player preferences
         sortedItems.sort(Comparator.comparing(i -> i.getType().name()));
 
         // Update inventory contents
