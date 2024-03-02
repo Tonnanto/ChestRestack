@@ -27,7 +27,8 @@ public class ChestRestackCommandRouter implements CommandExecutor, TabCompleter 
             new ReloadCommand(),
             new SortingCommand(),
             new ClickModeCommand(),
-            new MoveFromHotbarCommand()
+            new MoveFromHotbarCommand(),
+            new MoveToolsCommand()
     );
 
     @NotNull

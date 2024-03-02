@@ -17,5 +17,8 @@ commands:
     shift-right: "Click mode has been set to &bshift-right&f"
     shift-left: "Click mode has been set to &bshift-left&f"
   movefromhotbar:
-    enabled: "Moving items from hotbar has been &aenabled&f"
-    disabled: "Moving items from hotbar has been &cdisabled&f"
+    enabled: "Restacking of hotbar has been &aenabled&f"
+    disabled: "Restacking of hotbar has been &cdisabled&f"
+  movetools:
+    enabled: "Restacking of tools has been &aenabled&f"
+    disabled: "Restacking of tools has been &cdisabled&f"

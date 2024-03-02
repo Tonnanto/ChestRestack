@@ -6,11 +6,12 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
@@ -122,6 +123,40 @@ public class PlayerPreferences implements Serializable {
         }
 
         return false;
+    }
+
+    public Set<Material> getMaterialsToNotMove() {
+        Set<Material> materials = new HashSet<>();
+
+        if (!isMoveTools())
+            materials.addAll(getToolsToNotMove());
+        if (!isMoveArmor())
+            materials.addAll(getArmorToNotMove());
+
+        return materials;
+    }
+
+    public static Set<Material> getToolsToNotMove() {
+        return Set.of(
+                Material.WOODEN_SWORD, Material.STONE_SWORD, Material.IRON_SWORD, Material.GOLDEN_SWORD, Material.DIAMOND_SWORD, Material.NETHERITE_SWORD,
+                Material.WOODEN_AXE, Material.STONE_AXE, Material.IRON_AXE, Material.GOLDEN_AXE, Material.DIAMOND_AXE, Material.NETHERITE_AXE,
+                Material.WOODEN_PICKAXE, Material.STONE_PICKAXE, Material.IRON_PICKAXE, Material.GOLDEN_PICKAXE, Material.DIAMOND_PICKAXE, Material.NETHERITE_PICKAXE,
+                Material.WOODEN_SHOVEL, Material.STONE_SHOVEL, Material.IRON_SHOVEL, Material.GOLDEN_SHOVEL, Material.DIAMOND_SHOVEL, Material.NETHERITE_SHOVEL,
+                Material.WOODEN_HOE, Material.STONE_HOE, Material.IRON_HOE, Material.GOLDEN_HOE, Material.DIAMOND_HOE, Material.NETHERITE_HOE,
+                Material.BOW, Material.CROSSBOW, Material.TOTEM_OF_UNDYING, Material.TRIDENT, Material.SHIELD, Material.FLINT_AND_STEEL, Material.SHEARS, Material.FISHING_ROD,
+                Material.CLOCK, Material.COMPASS, Material.RECOVERY_COMPASS, Material.LEAD, Material.CARROT_ON_A_STICK, Material.BRUSH, Material.ELYTRA, Material.WARPED_FUNGUS_ON_A_STICK
+        );
+    }
+
+    public static Set<Material> getArmorToNotMove() {
+        return Set.of(
+                Material.LEATHER_HELMET, Material.CHAINMAIL_HELMET, Material.IRON_HELMET, Material.GOLDEN_HELMET, Material.DIAMOND_HELMET, Material.NETHERITE_HELMET,
+                Material.LEATHER_CHESTPLATE, Material.CHAINMAIL_CHESTPLATE, Material.IRON_CHESTPLATE, Material.GOLDEN_CHESTPLATE, Material.DIAMOND_CHESTPLATE, Material.NETHERITE_CHESTPLATE,
+                Material.LEATHER_LEGGINGS, Material.CHAINMAIL_LEGGINGS, Material.IRON_LEGGINGS, Material.GOLDEN_LEGGINGS, Material.DIAMOND_LEGGINGS, Material.NETHERITE_LEGGINGS,
+                Material.LEATHER_BOOTS, Material.CHAINMAIL_BOOTS, Material.IRON_BOOTS, Material.GOLDEN_BOOTS, Material.DIAMOND_BOOTS, Material.NETHERITE_BOOTS,
+                Material.TURTLE_HELMET, Material.ELYTRA, Material.SHIELD
+
+        );
     }
 
     public static String filePathForUUID(UUID id) {
