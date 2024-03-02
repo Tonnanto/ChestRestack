@@ -1,4 +1,22 @@
 name: ChestRestack
 version: '${version}'
 main: de.stamme.chestrestack.ChestRestack
+description: Lets you shift-click on chests to move items
+website: https://www.spigotmc.org/resources/87972/ # TODO: ADJUST ID
 api-version: '1.20'
+
+commands:
+  chestrestack:
+    description: ChestRestack Command
+    aliases: ["restack", "cr"]
+
+permissions:
+  chestrestack.use:
+    default: true
+    description: Lets players use the plugin
+  chestrestack.admin.update:
+    default: op
+    description: Lets players or the console to check for ChestRestack updates
+  chestrestack.admin.reload:
+    default: op
+    description: Lets players use the reload command
