@@ -4,6 +4,14 @@ generic:
   unknown-command: "The command &b{0}&f does not exist."
   no-permission: "You do not have &bpermission&f to do that."
   player-not-found: "The player &b{0}&f could not be found."
+restack:
+  chest:
+    multiple-types: "{0} items moved"
+    single-type: "{0} {1} moved"
+  furnace:
+    fuel: "{0} {1} added"
+    items: "{0} {1} added"
+    both: "{0} {1} and {2} {3} added"
 commands:
   reload:
     success: "ChestRestack has been successfully &breloaded&f."
@@ -16,9 +24,15 @@ commands:
   clickmode:
     shift-right: "Click mode has been set to &bshift-right&f"
     shift-left: "Click mode has been set to &bshift-left&f"
-  movefromhotbar:
+  hotbar:
     enabled: "Restacking of hotbar has been &aenabled&f"
     disabled: "Restacking of hotbar has been &cdisabled&f"
-  movetools:
-    enabled: "Restacking of tools has been &aenabled&f"
-    disabled: "Restacking of tools has been &cdisabled&f"
+  tools:
+    enabled: "Restacking of tools and weapons has been &aenabled&f"
+    disabled: "Restacking of tools and weapons has been &cdisabled&f"
+  armor:
+    enabled: "Restacking of armor has been &aenabled&f"
+    disabled: "Restacking of armor has been &cdisabled&f"
+  arrows:
+    enabled: "Restacking of arrows and rockets has been &aenabled&f"
+    disabled: "Restacking of arrows and rockets has been &cdisabled&f"

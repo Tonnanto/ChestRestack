@@ -11,10 +11,10 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MoveFromHotbarCommand extends ChestRestackCommand {
+public class MoveArmorCommand extends ChestRestackCommand {
 
-    protected MoveFromHotbarCommand() {
-        super("hotbar");
+    protected MoveArmorCommand() {
+        super("armor");
     }
 
     @Override
@@ -25,10 +25,10 @@ public class MoveFromHotbarCommand extends ChestRestackCommand {
 
         PlayerPreferences preferences = plugin.getPlayerPreference(player.getUniqueId());
 
-        // /chestrestack hotbar ...
+        // /chestrestack armor ...
         List<String> possible = new ArrayList<>();
 
-        if (preferences.isMoveFromHotbar()) {
+        if (preferences.isMoveArmor()) {
             possible.add("false");
         } else {
             possible.add("true");
@@ -46,18 +46,18 @@ public class MoveFromHotbarCommand extends ChestRestackCommand {
         PlayerPreferences preferences = plugin.getPlayerPreference(player.getUniqueId());
 
         if (params.isEmpty()) {
-            // Toggle movefromhotbar if no argument was given
-            enableMoveFromHotbar(!preferences.isMoveFromHotbar(), player, preferences);
+            // Toggle movearmor if no argument was given
+            enableMoveArmor(!preferences.isMoveArmor(), player, preferences);
         } else if (params.get(0).equalsIgnoreCase("true")) {
-            enableMoveFromHotbar(true, player, preferences);
+            enableMoveArmor(true, player, preferences);
         } else if (params.get(0).equalsIgnoreCase("false")) {
-            enableMoveFromHotbar(false, player, preferences);
+            enableMoveArmor(false, player, preferences);
         }
     }
 
-    private void enableMoveFromHotbar(boolean enable, Player player, PlayerPreferences preferences) {
-        preferences.setMoveFromHotbar(enable);
+    private void enableMoveArmor(boolean enable, Player player, PlayerPreferences preferences) {
+        preferences.setMoveArmor(enable);
         PlayerPreferences.savePreferencesForPlayer(preferences, player);
-        ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.hotbar." + (enable ? "enabled" : "disabled")));
+        ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.armor." + (enable ? "enabled" : "disabled")));
     }
 }

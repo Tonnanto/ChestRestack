@@ -49,13 +49,13 @@ public class HelpCommand extends ChestRestackCommand {
     private String statusString(PlayerPreferences preferences) {
         String s = "&fRestacking ";
         if (!preferences.isEnabled()) {
-            s += "&cdisbled &8- &7to enable use &b/clickrestack enable";
+            s += "&cdisbled &8- &7to enable use &b/chestrestack enable";
         } else {
             s += "&aenabled &8- &r";
             if (!Config.getSortingEnabledGlobal()) {
                 s += "Sorting &cdisabled &fon this server";
             } else if (!preferences.isSortingEnabled()) {
-                s += "Sorting &coff &8- &7to enable use &b/clickrestack sorting enable";
+                s += "Sorting &coff &8- &7to enable use &b/chestrestack sorting enable";
             } else {
                 s += "Sorting &aon";
             }

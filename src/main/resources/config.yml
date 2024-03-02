@@ -43,4 +43,4 @@ move-tools-default: false
 
 move-armor-default: false
 
-move-to-furnace-default: true
+move-arrows-default: true

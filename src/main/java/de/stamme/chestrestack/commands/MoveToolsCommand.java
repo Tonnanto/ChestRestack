@@ -14,7 +14,7 @@ import java.util.List;
 public class MoveToolsCommand extends ChestRestackCommand {
 
     protected MoveToolsCommand() {
-        super("movetools");
+        super("tools");
     }
 
     @Override
@@ -58,6 +58,6 @@ public class MoveToolsCommand extends ChestRestackCommand {
     private void enableMoveTools(boolean enable, Player player, PlayerPreferences preferences) {
         preferences.setMoveTools(enable);
         PlayerPreferences.savePreferencesForPlayer(preferences, player);
-        ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.movetools." + (enable ? "enabled" : "disabled")));
+        ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.tools." + (enable ? "enabled" : "disabled")));
     }
 }

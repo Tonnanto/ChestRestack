@@ -45,7 +45,6 @@ public class ClickBlockListener implements Listener {
             case SMOKER:
             case BLAST_FURNACE:
             case FURNACE:
-                if (!preferences.isMoveToFurnaces()) break;
                 if (!(inventory instanceof FurnaceInventory)) break;
                 handleFurnaceClick(event.getPlayer(), (FurnaceInventory) inventory, preferences);
                 break;

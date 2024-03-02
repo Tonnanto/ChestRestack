@@ -229,7 +229,7 @@ public class Config {
                 config.getBoolean("move-from-hotbar-default", true),
                 config.getBoolean("move-tools-default", false),
                 config.getBoolean("move-armor-default", false),
-                config.getBoolean("move-to-furnace-default", false)
+                config.getBoolean("move-arrows-default", true)
         );
     }
 }

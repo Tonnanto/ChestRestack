@@ -11,10 +11,10 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MoveFromHotbarCommand extends ChestRestackCommand {
+public class MoveArrowsCommand extends ChestRestackCommand {
 
-    protected MoveFromHotbarCommand() {
-        super("hotbar");
+    protected MoveArrowsCommand() {
+        super("arrows");
     }
 
     @Override
@@ -25,10 +25,10 @@ public class MoveFromHotbarCommand extends ChestRestackCommand {
 
         PlayerPreferences preferences = plugin.getPlayerPreference(player.getUniqueId());
 
-        // /chestrestack hotbar ...
+        // /chestrestack arrows ...
         List<String> possible = new ArrayList<>();
 
-        if (preferences.isMoveFromHotbar()) {
+        if (preferences.isMoveArrows()) {
             possible.add("false");
         } else {
             possible.add("true");
@@ -46,18 +46,18 @@ public class MoveFromHotbarCommand extends ChestRestackCommand {
         PlayerPreferences preferences = plugin.getPlayerPreference(player.getUniqueId());
 
         if (params.isEmpty()) {
-            // Toggle movefromhotbar if no argument was given
-            enableMoveFromHotbar(!preferences.isMoveFromHotbar(), player, preferences);
+            // Toggle movearrows if no argument was given
+            enableMoveArrows(!preferences.isMoveArrows(), player, preferences);
         } else if (params.get(0).equalsIgnoreCase("true")) {
-            enableMoveFromHotbar(true, player, preferences);
+            enableMoveArrows(true, player, preferences);
         } else if (params.get(0).equalsIgnoreCase("false")) {
-            enableMoveFromHotbar(false, player, preferences);
+            enableMoveArrows(false, player, preferences);
         }
     }
 
-    private void enableMoveFromHotbar(boolean enable, Player player, PlayerPreferences preferences) {
-        preferences.setMoveFromHotbar(enable);
+    private void enableMoveArrows(boolean enable, Player player, PlayerPreferences preferences) {
+        preferences.setMoveArrows(enable);
         PlayerPreferences.savePreferencesForPlayer(preferences, player);
-        ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.hotbar." + (enable ? "enabled" : "disabled")));
+        ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.arrows." + (enable ? "enabled" : "disabled")));
     }
 }
