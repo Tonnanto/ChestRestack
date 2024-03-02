@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
 
 public class MessagesConfig {
     private static FileConfiguration customMessages;
@@ -46,7 +47,9 @@ public class MessagesConfig {
         InputStream inputStream = classLoader.getResourceAsStream(filePath);
 
         if (inputStream == null) {
-            throw new IllegalArgumentException("file not found! " + filePath);
+            ChestRestack.log(Level.SEVERE, String.format("No messages file found at %s for locale %s", filePath, locale));
+            // Fallback to default locale "en"
+            return getDefaultMessages("en");
         }
 
         try (
@@ -58,7 +61,7 @@ public class MessagesConfig {
             return config;
 
         } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+            ChestRestack.log(Level.SEVERE, e.getMessage());
             return null;
         }
     }

@@ -1,4 +1,4 @@
-package de.stamme.chestrestack;
+package de.stamme.chestrestack.model;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import de.stamme.chestrestack.ChestRestack;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.util.io.BukkitObjectInputStream;

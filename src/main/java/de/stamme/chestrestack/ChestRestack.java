@@ -1,17 +1,22 @@
 package de.stamme.chestrestack;
 
+import de.stamme.chestrestack.util.BukkitVersion;
 import de.stamme.chestrestack.commands.ChestRestackCommandRouter;
 import de.stamme.chestrestack.config.Config;
 import de.stamme.chestrestack.config.MessagesConfig;
+import de.stamme.chestrestack.config.MinecraftLocaleConfig;
 import de.stamme.chestrestack.listeners.ClickBlockListener;
 import de.stamme.chestrestack.listeners.PlayerJoinListener;
+import de.stamme.chestrestack.model.PlayerPreferences;
 import de.stamme.chestrestack.util.MetricsService;
+import de.stamme.chestrestack.util.UpdateChecker;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import de.themoep.minedown.MineDown;
@@ -49,6 +54,26 @@ public final class ChestRestack extends JavaPlugin {
         }
 
         MetricsService.setUpMetrics();
+
+        // run after reload is complete
+        getServer().getScheduler().runTask(this, () -> {
+
+            // reload PlayerData for online players
+            reloadPlayerPreferences();
+
+            // Programmatically set the default permission value cause Bukkit doesn't handle plugin.yml properly for Load order STARTUP plugins
+            org.bukkit.permissions.Permission perm = getServer().getPluginManager().getPermission("chestrestack.admin.update");
+
+            if (perm == null) {
+                perm = new org.bukkit.permissions.Permission("chestrestack.admin.update");
+                perm.setDefault(PermissionDefault.OP);
+                plugin.getServer().getPluginManager().addPermission(perm);
+            }
+
+            perm.setDescription("Allows a user or the console to check for ChestRestack updates");
+
+            UpdateChecker.getInstance();
+        });
     }
 
     @Override
@@ -63,7 +88,7 @@ public final class ChestRestack extends JavaPlugin {
     public void reload() {
         Config.reload();
         MessagesConfig.register(Config.getLocale());
-//        MinecraftLocaleConfig.register(); // TODO: Use MinecraftLocaleConfig?
+        MinecraftLocaleConfig.register();
     }
 
     /**
@@ -72,6 +97,7 @@ public final class ChestRestack extends JavaPlugin {
     private void registerConfigs() {
         Config.register();
         MessagesConfig.register(Config.getLocale());
+        MinecraftLocaleConfig.register();
     }
 
     /**
@@ -97,6 +123,17 @@ public final class ChestRestack extends JavaPlugin {
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new ClickBlockListener(), this);
         pluginManager.registerEvents(new PlayerJoinListener(), this);
+    }
+
+    /**
+     * Reload the player preferences.
+     */
+    private void reloadPlayerPreferences() {
+        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+            if (!PlayerPreferences.loadPlayerData(player)) {
+                ChestRestack.getPlugin().getPlayerPreferences().put(player.getUniqueId(), Config.getDefaultPlayerPreferences());
+            }
+        }
     }
 
     /**
@@ -205,5 +242,26 @@ public final class ChestRestack extends JavaPlugin {
      */
     public static String getUserdataPath() {
         return userdataPath;
+    }
+
+    /**
+     * Retrieve the Bukkit version.
+     *
+     * @return BukkitVersion
+     */
+    public static BukkitVersion getBukkitVersion() {
+        if (ChestRestack.getPlugin().getServer().getBukkitVersion().contains("1.16"))
+            return BukkitVersion.v1_16;
+
+        if (ChestRestack.getPlugin().getServer().getBukkitVersion().contains("1.17"))
+            return BukkitVersion.v1_17;
+
+        if (ChestRestack.getPlugin().getServer().getBukkitVersion().contains("1.18"))
+            return BukkitVersion.v1_18;
+
+        if (ChestRestack.getPlugin().getServer().getBukkitVersion().contains("1.19"))
+            return BukkitVersion.v1_19;
+
+        return BukkitVersion.v1_20;
     }
 }

@@ -1,7 +1,7 @@
 package de.stamme.chestrestack.commands;
 
 import de.stamme.chestrestack.ChestRestack;
-import de.stamme.chestrestack.PlayerPreferences;
+import de.stamme.chestrestack.model.PlayerPreferences;
 import de.stamme.chestrestack.config.MessagesConfig;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static de.stamme.chestrestack.PlayerPreferences.ClickMode.*;
+import static de.stamme.chestrestack.model.PlayerPreferences.ClickMode.*;
 
 public class ClickModeCommand extends ChestRestackCommand {
 

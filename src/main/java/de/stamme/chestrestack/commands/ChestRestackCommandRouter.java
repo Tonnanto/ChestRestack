@@ -3,7 +3,7 @@ package de.stamme.chestrestack.commands;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import de.stamme.chestrestack.ChestRestack;
-import de.stamme.chestrestack.PlayerPreferences;
+import de.stamme.chestrestack.model.PlayerPreferences;
 import de.stamme.chestrestack.config.Config;
 import de.stamme.chestrestack.config.MessagesConfig;
 import org.bukkit.command.Command;
@@ -56,7 +56,8 @@ public class ChestRestackCommandRouter implements CommandExecutor, TabCompleter 
     @Override
     public boolean onCommand(@NotNull final CommandSender sender, @NotNull final Command command, @NotNull final String alias, @NotNull final String[] args) {
         if (args.length == 0) {
-            final ChestRestackCommand fallback = commands.get("list");
+            // fallback to "/chestrestack help" if no arguments were given
+            final ChestRestackCommand fallback = commands.get("help");
             if (fallback != null) {
                 fallback.evaluate(plugin, sender, "", Collections.emptyList());
             }

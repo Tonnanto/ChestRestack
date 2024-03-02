@@ -1,7 +1,7 @@
 package de.stamme.chestrestack.listeners;
 
 import de.stamme.chestrestack.ChestRestack;
-import de.stamme.chestrestack.PlayerPreferences;
+import de.stamme.chestrestack.model.PlayerPreferences;
 import de.stamme.chestrestack.config.Config;
 import de.stamme.chestrestack.util.UpdateChecker;
 import org.bukkit.entity.Player;

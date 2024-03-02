@@ -1,7 +1,7 @@
 package de.stamme.chestrestack.config;
 
 import de.stamme.chestrestack.ChestRestack;
-import de.stamme.chestrestack.PlayerPreferences;
+import de.stamme.chestrestack.model.PlayerPreferences;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.io.File;

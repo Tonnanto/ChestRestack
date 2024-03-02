@@ -5,9 +5,13 @@ generic:
   no-permission: "You do not have &bpermission&f to do that."
   player-not-found: "The player &b{0}&f could not be found."
 restack:
-  chest:
-    multiple-types: "{0} items moved"
-    single-type: "{0} {1} moved"
+  container:
+    moved-multiple-types: "&b{0} &fitems moved"
+    moved-single-type: "&b{0} &f{1} moved"
+    sorted: "&f{0} sorted"
+    nothing-to-move: "&fNo items to move"
+    no-space-multiple-types: "&fNo space for &c{0} &fitems"
+    no-space-single-type: "&fNo space for &c{0} &f{1}"
   furnace:
     fuel: "{0} {1} added"
     items: "{0} {1} added"
