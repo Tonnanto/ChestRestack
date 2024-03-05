@@ -1,0 +1,38 @@
+generic:
+  prefix: "&bChestRestack &8>&f "
+  usage: "Benutze: {0}"
+  unknown-command: "Der Command &b{0}&f existiert nicht."
+  no-permission: "Du hast keine &bBerechtigung&f dies zu tun."
+  player-not-found: "Der Spieler &b{0}&f konnte nicht gefunden werden."
+restack:
+  container:
+    moved-multiple-types: "&a{0} Items &7verschoben"
+    moved-single-type: "&a{0} {1} &7verschoben"
+    sorted: "&7{0} sortiert"
+    nothing-to-move: "&7Keine Items hinzuzufügen"
+    no-space-multiple-types: "&7Kein Platz für &c{0} Items&7"
+    no-space-single-type: "&7Kein Platz für &c{0} {1}&7"
+commands:
+  reload:
+    success: "ChestRestack wurde erfolgreich neu &bgeladen&f."
+  enable: "Chest restacking wurde &aaktiviert&f"
+  disable: "Chest restacking wurde &cdeaktiviert&f"
+  sorting:
+    enabled: "Sortieren wurde &aaktiviert&f"
+    disabled: "Sortieren wurde &cdeaktiviert&f"
+    disabled-globally: "Soriteren mit ChestRestack wurde auf diesem Server &cdeaktiviert&f."
+  clickmode:
+    shift-right: "Click-Mode wurde auf &bshift-right&f gesetzt"
+    shift-left: "Click-Mode wurde auf &bshift-left&f gesetzt"
+  hotbar:
+    enabled: "Restacken der Hotbar &aaktiviert&f"
+    disabled: "Restacken der Hotbar &cdeaktiviert&f"
+  tools:
+    enabled: "Restacken von Tools und Waffen &aaktiviert&f"
+    disabled: "Restacken von Tools und Waffen &cdeaktiviert&f"
+  armor:
+    enabled: "Restacken von Rüstung &aaktiviert&f"
+    disabled: "Restacken von Rüstung &cdeaktiviert&f"
+  arrows:
+    enabled: "Restacken von Pfeilen und Raketen &aaktiviert&f"
+    disabled: "Restacken von Pfeilen und Raketen &cdeaktiviert&f"

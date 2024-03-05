@@ -43,7 +43,7 @@ public class StringFormatter {
 
     public static String formatMaterialName(Material material) {
         StringBuilder s = new StringBuilder();
-        String itemName = MinecraftLocaleConfig.getMinecraftName(material.name(), "item.minecraft.");
+        String itemName = MinecraftLocaleConfig.getMinecraftName(material.name(), "item.minecraft.", "container.", "block.minecraft.");
         s.append(itemName);
         return s.toString();
     }

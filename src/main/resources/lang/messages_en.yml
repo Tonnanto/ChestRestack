@@ -6,16 +6,12 @@ generic:
   player-not-found: "The player &b{0}&f could not be found."
 restack:
   container:
-    moved-multiple-types: "&b{0} &fitems moved"
-    moved-single-type: "&b{0} &f{1} moved"
-    sorted: "&f{0} sorted"
-    nothing-to-move: "&fNo items to move"
-    no-space-multiple-types: "&fNo space for &c{0} &fitems"
-    no-space-single-type: "&fNo space for &c{0} &f{1}"
-  furnace:
-    fuel: "{0} {1} added"
-    items: "{0} {1} added"
-    both: "{0} {1} and {2} {3} added"
+    moved-multiple-types: "&a{0} items &7moved"
+    moved-single-type: "&a{0} {1} &7moved"
+    sorted: "&7{0} sorted"
+    nothing-to-move: "&7No items to move"
+    no-space-multiple-types: "&7No space for &c{0} items&7"
+    no-space-single-type: "&7No space for &c{0} {1}&7"
 commands:
   reload:
     success: "ChestRestack has been successfully &breloaded&f."
