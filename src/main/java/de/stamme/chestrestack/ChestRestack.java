@@ -83,7 +83,7 @@ public final class ChestRestack extends JavaPlugin {
     }
 
     /**
-     * Reload the plugin configuration and quest generation files.
+     * Reload the plugin configuration.
      */
     public void reload() {
         Config.reload();

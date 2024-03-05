@@ -51,7 +51,7 @@ public class UpdateChecker {
                 } else {
                     notifyUser(plugin.getServer().getConsoleSender());
                     for (CommandSender player : plugin.getServer().getOnlinePlayers()) {
-                        if (player.hasPermission("basicquests.admin.update")) {
+                        if (player.hasPermission("chestrestack.admin.update")) {
                             notifyUser(player);
                         }
                     }
@@ -62,7 +62,7 @@ public class UpdateChecker {
     }
 
     /**
-     * Pulls the most recent version of BasicQuests from SpigotMC
+     * Pulls the most recent version of ChestRestack from SpigotMC
      *
      * @param consumer the consumer to accept the pulled version string
      */

@@ -5,6 +5,7 @@ import de.stamme.chestrestack.model.PlayerPreferences;
 import de.stamme.chestrestack.config.Config;
 import de.stamme.chestrestack.model.RestackResult;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -58,6 +59,11 @@ public class ClickBlockListener implements Listener {
                 break;
             case BREWING:
             default: break;
+        }
+
+        // Play sound
+        if (Config.getRestackSound() && result != null && result.numberOfItemsMoved() > 0) {
+            player.playSound(player.getLocation(), Sound.ITEM_BUNDLE_INSERT, 1, 1);
         }
 
         // Send a message to player based on the restack result
