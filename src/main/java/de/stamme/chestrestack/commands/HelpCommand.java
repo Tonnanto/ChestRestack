@@ -1,6 +1,7 @@
 package de.stamme.chestrestack.commands;
 
 import de.stamme.chestrestack.ChestRestack;
+import de.stamme.chestrestack.config.MessagesConfig;
 import de.stamme.chestrestack.model.PlayerPreferences;
 import de.stamme.chestrestack.config.Config;
 import org.bukkit.command.CommandSender;
@@ -8,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 public class HelpCommand extends ChestRestackCommand {
@@ -26,41 +28,43 @@ public class HelpCommand extends ChestRestackCommand {
         }
 
         StringBuilder sb = new StringBuilder();
+
         // Title - Header
-        sb.append("\n&bChestRestack &8- &7Help Menu");
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.header"));
+
         // General description
-        sb.append(String.format("\n%s click on a chest to move items from your inventory to the chest that were already present in the chest.", preferences.getClickMode().toString()));
+        sb.append(MessageFormat.format(MessagesConfig.getMessage("commands.help.info"), preferences.getClickMode().toString()));
+
         // Status (enabled / disabled) (sorting enabled / disabled)
         sb.append("\n\n");
-        sb.append(statusString(preferences));
+        sb.append(preferences.getRestackingMessage());
+
         // Commands help
         sb.append("\n");
-        sb.append("\n&b/chestrestack &9<enable | disable>");
-        sb.append("\n  &7Enable or disable the plugin for you");
-        sb.append("\n&b/chestrestack &fsorting &9<true | false>");
-        sb.append("\n  &7Enable or disable the sorting of chests after restacking");
-        // TODO: add commands
-        // TODO: move strings to messages.yml files
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.enable-disable-command"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.enable-disable-info"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-command"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-info"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-sorting-command"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-sorting-info"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-clickmode-command"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-clickmode-info"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-tools-command"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-tools-info"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-armor-command"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-armor-info"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-arrows-command"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-arrows-info"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-reset-command"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-reset-info"));
 
-
-        ChestRestack.sendRawMessage(sender, sb.toString());
-    }
-
-    private String statusString(PlayerPreferences preferences) {
-        String s = "&fRestacking ";
-        if (!preferences.isEnabled()) {
-            s += "&cdisbled &8- &7to enable use &b/chestrestack enable";
-        } else {
-            s += "&aenabled &8- &r";
-            if (!Config.getSortingEnabledGlobal()) {
-                s += "Sorting &cdisabled &fon this server";
-            } else if (!preferences.isSortingEnabled()) {
-                s += "Sorting &coff &8- &7to enable use &b/chestrestack sorting enable";
-            } else {
-                s += "Sorting &aon";
-            }
+        if (sender.hasPermission("chestrestack.admin.reload")) {
+            sb.append(MessagesConfig.getMessage("commands.help.reload-command"));
+            sb.append(MessagesConfig.getMessage("commands.help.reload-info"));
         }
 
-        return s;
+        sb.append("\n");
+
+        ChestRestack.sendRawMessage(sender, sb.toString());
     }
 }

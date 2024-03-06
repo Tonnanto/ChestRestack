@@ -44,7 +44,16 @@ public class PreferencesCommand extends ChestRestackCommand {
 
     @Override
     public void complete(@NotNull ChestRestack plugin, @NotNull CommandSender sender, @NotNull String alias, @NotNull @Unmodifiable List<String> params, @NotNull List<String> suggestions) {
-        if (params.size() > 1 || !(sender instanceof Player) || !sender.hasPermission(getPermission())) {
+        if (!(sender instanceof Player) || !sender.hasPermission(getPermission())) {
+            return;
+        }
+
+        if (params.size() > 1) {
+            final String search = params.get(0).toLowerCase(Locale.ROOT);
+            final ChestRestackCommand target = commands.get(search);
+            if (target != null) {
+                target.complete(plugin, sender, alias, params.subList(1, params.size()), suggestions);
+            }
             return;
         }
 
