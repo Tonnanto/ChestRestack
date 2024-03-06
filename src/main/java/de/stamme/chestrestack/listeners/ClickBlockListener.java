@@ -127,6 +127,7 @@ public class ClickBlockListener implements Listener {
 
         // Update player inventory contents
         for (Map.Entry<Integer, ItemStack> entry : itemsToMove.entrySet()) {
+            ItemStack movedItemStack = entry.getValue().clone();
             // remove from player inventory
             playerInventoryContents[entry.getKey()] = null;
 
@@ -140,13 +141,12 @@ public class ClickBlockListener implements Listener {
                 itemsNotMoved.add(returnedItemStack);
 
                 // add items that DID fit to "itemsMoved" list
-                ItemStack movedItemStack = entry.getValue().clone();
-                movedItemStack.setAmount(entry.getValue().getAmount() - entry.getValue().getAmount());
+                movedItemStack.setAmount(movedItemStack.getAmount() - returnedItemStack.getAmount());
                 if (movedItemStack.getType() != Material.AIR && movedItemStack.getAmount() > 0) {
                     itemsMoved.add(movedItemStack);
                 }
             } else {
-                itemsMoved.add(entry.getValue());
+                itemsMoved.add(movedItemStack);
             }
         }
 

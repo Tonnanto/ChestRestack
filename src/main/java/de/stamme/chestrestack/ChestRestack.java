@@ -250,16 +250,17 @@ public final class ChestRestack extends JavaPlugin {
      * @return BukkitVersion
      */
     public static BukkitVersion getBukkitVersion() {
-        if (ChestRestack.getPlugin().getServer().getBukkitVersion().contains("1.16"))
+        String serverVersionString = ChestRestack.getPlugin().getServer().getBukkitVersion();
+        if (serverVersionString.contains("1.16"))
             return BukkitVersion.v1_16;
 
-        if (ChestRestack.getPlugin().getServer().getBukkitVersion().contains("1.17"))
+        if (serverVersionString.contains("1.17"))
             return BukkitVersion.v1_17;
 
-        if (ChestRestack.getPlugin().getServer().getBukkitVersion().contains("1.18"))
+        if (serverVersionString.contains("1.18"))
             return BukkitVersion.v1_18;
 
-        if (ChestRestack.getPlugin().getServer().getBukkitVersion().contains("1.19"))
+        if (serverVersionString.contains("1.19"))
             return BukkitVersion.v1_19;
 
         return BukkitVersion.v1_20;
