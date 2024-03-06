@@ -6,12 +6,16 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import de.stamme.chestrestack.ChestRestack;
+import de.stamme.chestrestack.config.Config;
+import de.stamme.chestrestack.config.MessagesConfig;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.util.io.BukkitObjectInputStream;
@@ -28,6 +32,10 @@ public class PlayerPreferences implements Serializable {
         public String toString() {
             return name().replace("_", "-").toLowerCase();
         }
+
+        public String messageKey() {
+            return String.format("preferences.sortmode-%s", this);
+        }
     }
 
     public enum ClickMode {
@@ -36,6 +44,10 @@ public class PlayerPreferences implements Serializable {
         @Override
         public String toString() {
             return name().replace("_", "-").toLowerCase();
+        }
+
+        public String messageKey() {
+            return String.format("preferences.clickmode-%s", this);
         }
     }
 
@@ -165,6 +177,68 @@ public class PlayerPreferences implements Serializable {
 
     public static String filePathForUUID(UUID id) {
         return ChestRestack.getUserdataPath() + "/" + id + ".data";
+    }
+
+    /**
+     * Returns a minedown formatted message that gets displayed when the user uses the "/chestrestack preferences" command.
+     * This message also allows the user to change their settings by clicking toggles.
+     * @return the formatted minedown message
+     */
+    public String getMessage() {
+        StringBuilder sb = new StringBuilder("\n" + MessagesConfig.getMessage("commands.preferences.header"));
+
+        sb.append("\n").append(getRestackingMessage());
+        sb.append("&7 - ").append(getClickmodeMessage());
+        if (Config.getSortingEnabledGlobal()) {
+            sb.append("\n").append(getSortingMessage());
+            sb.append("&7 - ").append(getSortmodeMessage());
+        }
+        sb.append("\n").append(getHotbarMessage());
+        sb.append("\n").append(getToolsMessage());
+        sb.append("\n").append(getArmorMessage());
+        sb.append("\n").append(getArrowsMessage());
+        sb.append("\n").append(MessagesConfig.getMessage("commands.preferences.footer"));
+        return sb.toString();
+    }
+
+    public String getRestackingMessage() {
+        String restackingToggle = MessagesConfig.getMessage(enabled ? "preferences.restacking-toggle-enabled" : "preferences.restacking-toggle-disabled");
+        return MessageFormat.format(MessagesConfig.getMessage("commands.preferences.restacking"), restackingToggle);
+    }
+
+    public String getClickmodeMessage() {
+        String clickModeToggle = MessageFormat.format(MessagesConfig.getMessage("preferences.clickmode-toggle"), MessagesConfig.getMessage(clickMode.messageKey()));
+        return MessageFormat.format(MessagesConfig.getMessage("commands.preferences.clickmode"), clickModeToggle);
+    }
+
+    public String getSortingMessage() {
+        String sortingToggle = MessageFormat.format(MessagesConfig.getMessage("preferences.sorting-toggle"), MessagesConfig.getMessage(sortingEnabled ? "preferences.enabled" : "preferences.disabled"));
+        return MessageFormat.format(MessagesConfig.getMessage("commands.preferences.sorting"), sortingToggle);
+    }
+
+    public String getSortmodeMessage() {
+        String sortModeToggle = MessageFormat.format(MessagesConfig.getMessage("preferences.sortmode-toggle"), MessagesConfig.getMessage(sortMode.messageKey()));
+        return MessageFormat.format(MessagesConfig.getMessage("commands.preferences.sortmode"), sortModeToggle);
+    }
+
+    public String getHotbarMessage() {
+        String hotbarToggle = MessageFormat.format(MessagesConfig.getMessage("preferences.hotbar-toggle"), MessagesConfig.getMessage(moveFromHotbar ? "preferences.enabled" : "preferences.disabled"));
+        return MessageFormat.format(MessagesConfig.getMessage("commands.preferences.hotbar"), hotbarToggle);
+    }
+
+    public String getToolsMessage() {
+        String toolsToggle = MessageFormat.format(MessagesConfig.getMessage("preferences.tools-toggle"), MessagesConfig.getMessage(moveTools ? "preferences.enabled" : "preferences.disabled"));
+        return MessageFormat.format(MessagesConfig.getMessage("commands.preferences.tools"), toolsToggle);
+    }
+
+    public String getArmorMessage() {
+        String armorToggle = MessageFormat.format(MessagesConfig.getMessage("preferences.armor-toggle"), MessagesConfig.getMessage(moveArmor ? "preferences.enabled" : "preferences.disabled"));
+        return MessageFormat.format(MessagesConfig.getMessage("commands.preferences.armor"), armorToggle);
+    }
+
+    public String getArrowsMessage() {
+        String arrowsToggle = MessageFormat.format(MessagesConfig.getMessage("preferences.arrows-toggle"), MessagesConfig.getMessage(moveArrows ? "preferences.enabled" : "preferences.disabled"));
+        return MessageFormat.format(MessagesConfig.getMessage("commands.preferences.arrows"), arrowsToggle);
     }
 
     public boolean isEnabled() {

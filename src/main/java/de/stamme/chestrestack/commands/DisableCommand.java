@@ -24,6 +24,6 @@ public class DisableCommand extends ChestRestackCommand {
         preferences.setEnabled(false);
         PlayerPreferences.savePreferencesForPlayer(preferences, player);
 
-        ChestRestack.sendMessage(sender, MessagesConfig.getMessage("commands.disable"));
+        ChestRestack.sendMessage(sender, preferences.getRestackingMessage());
     }
 }

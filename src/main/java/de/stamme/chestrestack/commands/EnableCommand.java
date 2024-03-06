@@ -24,6 +24,6 @@ public class EnableCommand extends ChestRestackCommand {
         preferences.setEnabled(true);
         PlayerPreferences.savePreferencesForPlayer(preferences, player);
 
-        ChestRestack.sendMessage(sender, MessagesConfig.getMessage("commands.enable"));
+        ChestRestack.sendMessage(sender, preferences.getRestackingMessage());
     }
 }

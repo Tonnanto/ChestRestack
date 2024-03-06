@@ -25,7 +25,7 @@ public class MoveToolsCommand extends ChestRestackCommand {
 
         PlayerPreferences preferences = plugin.getPlayerPreference(player.getUniqueId());
 
-        // chestrestack movetools ...
+        // /chestrestack preferences tools ...
         List<String> possible = new ArrayList<>();
 
         if (preferences.isMoveTools()) {
@@ -58,6 +58,6 @@ public class MoveToolsCommand extends ChestRestackCommand {
     private void enableMoveTools(boolean enable, Player player, PlayerPreferences preferences) {
         preferences.setMoveTools(enable);
         PlayerPreferences.savePreferencesForPlayer(preferences, player);
-        ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.tools." + (enable ? "enabled" : "disabled")));
+        ChestRestack.sendMessage(player, preferences.getToolsMessage());
     }
 }

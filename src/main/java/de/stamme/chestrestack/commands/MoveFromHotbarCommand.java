@@ -25,7 +25,7 @@ public class MoveFromHotbarCommand extends ChestRestackCommand {
 
         PlayerPreferences preferences = plugin.getPlayerPreference(player.getUniqueId());
 
-        // /chestrestack hotbar ...
+        // /chestrestack preferences hotbar ...
         List<String> possible = new ArrayList<>();
 
         if (preferences.isMoveFromHotbar()) {
@@ -58,6 +58,6 @@ public class MoveFromHotbarCommand extends ChestRestackCommand {
     private void enableMoveFromHotbar(boolean enable, Player player, PlayerPreferences preferences) {
         preferences.setMoveFromHotbar(enable);
         PlayerPreferences.savePreferencesForPlayer(preferences, player);
-        ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.hotbar." + (enable ? "enabled" : "disabled")));
+        ChestRestack.sendMessage(player, preferences.getHotbarMessage());
     }
 }

@@ -25,7 +25,7 @@ public class MoveArmorCommand extends ChestRestackCommand {
 
         PlayerPreferences preferences = plugin.getPlayerPreference(player.getUniqueId());
 
-        // /chestrestack armor ...
+        // /chestrestack preferemces armor ...
         List<String> possible = new ArrayList<>();
 
         if (preferences.isMoveArmor()) {
@@ -58,6 +58,6 @@ public class MoveArmorCommand extends ChestRestackCommand {
     private void enableMoveArmor(boolean enable, Player player, PlayerPreferences preferences) {
         preferences.setMoveArmor(enable);
         PlayerPreferences.savePreferencesForPlayer(preferences, player);
-        ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.armor." + (enable ? "enabled" : "disabled")));
+        ChestRestack.sendMessage(player, preferences.getArmorMessage());
     }
 }

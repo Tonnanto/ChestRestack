@@ -25,7 +25,7 @@ public class ClickModeCommand extends ChestRestackCommand {
             return;
         }
 
-        // chestrestack clickmode ...
+        // /chestrestack preferences clickmode ...
         List<String> possible = new ArrayList<>();
 
         for (PlayerPreferences.ClickMode mode : PlayerPreferences.ClickMode.values()) {
@@ -56,6 +56,6 @@ public class ClickModeCommand extends ChestRestackCommand {
     private void setClickMode(PlayerPreferences.ClickMode mode, Player player, PlayerPreferences preferences) {
         preferences.setClickMode(mode);
         PlayerPreferences.savePreferencesForPlayer(preferences, player);
-        ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.clickmode." + mode));
+        ChestRestack.sendMessage(player, preferences.getClickmodeMessage());
     }
 }

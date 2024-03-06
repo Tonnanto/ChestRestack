@@ -25,7 +25,7 @@ public class MoveArrowsCommand extends ChestRestackCommand {
 
         PlayerPreferences preferences = plugin.getPlayerPreference(player.getUniqueId());
 
-        // /chestrestack arrows ...
+        // /chestrestack preferences arrows ...
         List<String> possible = new ArrayList<>();
 
         if (preferences.isMoveArrows()) {
@@ -58,6 +58,6 @@ public class MoveArrowsCommand extends ChestRestackCommand {
     private void enableMoveArrows(boolean enable, Player player, PlayerPreferences preferences) {
         preferences.setMoveArrows(enable);
         PlayerPreferences.savePreferencesForPlayer(preferences, player);
-        ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.arrows." + (enable ? "enabled" : "disabled")));
+        ChestRestack.sendMessage(player, preferences.getArrowsMessage());
     }
 }

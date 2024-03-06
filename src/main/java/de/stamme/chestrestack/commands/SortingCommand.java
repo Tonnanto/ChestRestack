@@ -26,7 +26,7 @@ public class SortingCommand extends ChestRestackCommand {
 
         PlayerPreferences preferences = plugin.getPlayerPreference(player.getUniqueId());
 
-        // chestrestack sorting ...
+        // /chestrestack preferences sorting ...
         List<String> possible = new ArrayList<>();
 
         if (preferences.isSortingEnabled()) {
@@ -63,6 +63,6 @@ public class SortingCommand extends ChestRestackCommand {
     private void enableSorting(boolean enable, Player player, PlayerPreferences preferences) {
         preferences.setSortingEnabled(enable);
         PlayerPreferences.savePreferencesForPlayer(preferences, player);
-        ChestRestack.sendMessage(player, MessagesConfig.getMessage("commands.sorting." + (enable ? "enabled" : "disabled")));
+        ChestRestack.sendMessage(player, preferences.getSortingMessage());
     }
 }

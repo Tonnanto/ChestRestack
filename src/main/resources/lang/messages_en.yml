@@ -12,27 +12,35 @@ restack:
     nothing-to-move: "&7No items to move"
     no-space-multiple-types: "&7No space for &c{0} items&7"
     no-space-single-type: "&7No space for &c{0} {1}&7"
+preferences:
+  enabled: "&aON"
+  disabled: "&cOFF"
+  clickmode-shift-right: "SHIFT-RIGHT"
+  clickmode-shift-left: "SHIFT-LEFT"
+  sortmode-name: "NAME"
+  sortmode-id: "ID"
+  sortmode-group: "GROUP"
+  restacking-toggle-enabled: "[&aON](hover=&bClick&f to disable run_command=/chestrestack disable)"
+  restacking-toggle-disabled: "[&cOFF](hover=&bClick&f to enable run_command=/chestrestack enable)"
+  clickmode-toggle: "[&b{0}](hover=&bClick&f to toggle run_command=/chestrestack preferences clickmode)"
+  sorting-toggle: "[{0}](hover=&bClick&f to toggle run_command=/chestrestack preferences sorting)"
+  sortmode-toggle: "[&b{0}](hover=&bClick&f to toggle run_command=/chestrestack preferences sortmode)"
+  hotbar-toggle: "[{0}](hover=&bClick&f to toggle run_command=/chestrestack preferences hotbar)"
+  tools-toggle: "[{0}](hover=&bClick&f to toggle run_command=/chestrestack preferences tools)"
+  armor-toggle: "[{0}](hover=&bClick&f to toggle run_command=/chestrestack preferences armor)"
+  arrows-toggle: "[{0}](hover=&bClick&f to toggle run_command=/chestrestack preferences arrows)"
 commands:
   reload:
     success: "ChestRestack has been successfully &breloaded&f."
-  enable: "Chest restacking has been &aenabled&f"
-  disable: "Chest restacking has been &cdisabled&f"
-  sorting:
-    enabled: "Sorting has been &aenabled&f"
-    disabled: "Sorting has been &cdisabled&f"
-    disabled-globally: "Sorting with ChestRestack has been &cdisabled&f on this server."
-  clickmode:
-    shift-right: "Click mode has been set to &bshift-right&f"
-    shift-left: "Click mode has been set to &bshift-left&f"
-  hotbar:
-    enabled: "Restacking of hotbar has been &aenabled&f"
-    disabled: "Restacking of hotbar has been &cdisabled&f"
-  tools:
-    enabled: "Restacking of tools and weapons has been &aenabled&f"
-    disabled: "Restacking of tools and weapons has been &cdisabled&f"
-  armor:
-    enabled: "Restacking of armor has been &aenabled&f"
-    disabled: "Restacking of armor has been &cdisabled&f"
-  arrows:
-    enabled: "Restacking of arrows and rockets has been &aenabled&f"
-    disabled: "Restacking of arrows and rockets has been &cdisabled&f"
+  reset: "Default preferences &brestored&f."
+  preferences:
+    header: "&b&m+&8&m              &b ChestRestack Preferences &8&m              &b&m+\n"
+    restacking: "&fRestacking {0}"
+    clickmode: "&fClick Mode &b{0}"
+    sorting: "&fSorting {0}"
+    sortmode: "&fSort Mode &b{0}"
+    hotbar: "&fMove items from hotbar {0}"
+    tools: "&fMove tools and weapons {0}"
+    armor: "&fMove armor {0}"
+    arrows: "&fMove arrows and rockets {0}"
+    footer: "\n&7Click on the preference you want to change."
