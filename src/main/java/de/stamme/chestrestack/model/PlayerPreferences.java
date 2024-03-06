@@ -25,19 +25,6 @@ public class PlayerPreferences implements Serializable {
     @Serial
     private static final long serialVersionUID = 420L;
 
-    public enum SortMode {
-        NAME, ID, GROUP;
-
-        @Override
-        public String toString() {
-            return name().replace("_", "-").toLowerCase();
-        }
-
-        public String messageKey() {
-            return String.format("preferences.sortmode-%s", this);
-        }
-    }
-
     public enum ClickMode {
         SHIFT_LEFT, SHIFT_RIGHT;
 
@@ -54,17 +41,15 @@ public class PlayerPreferences implements Serializable {
     private boolean enabled;
     private ClickMode clickMode;
     private boolean sortingEnabled;
-    private SortMode sortMode;
     private boolean moveFromHotbar;
     private boolean moveTools;
     private boolean moveArmor;
     private boolean moveArrows;
 
-    public PlayerPreferences(boolean enabled, ClickMode clickMode, boolean sortingEnabled, SortMode sortMode, boolean moveFromHotbar, boolean moveTools, boolean moveArmor, boolean moveArrows) {
+    public PlayerPreferences(boolean enabled, ClickMode clickMode, boolean sortingEnabled, boolean moveFromHotbar, boolean moveTools, boolean moveArmor, boolean moveArrows) {
         this.enabled = enabled;
         this.clickMode = clickMode;
         this.sortingEnabled = sortingEnabled;
-        this.sortMode = sortMode;
         this.moveFromHotbar = moveFromHotbar;
         this.moveTools = moveTools;
         this.moveArmor = moveArmor;
@@ -188,15 +173,14 @@ public class PlayerPreferences implements Serializable {
         StringBuilder sb = new StringBuilder("\n" + MessagesConfig.getMessage("commands.preferences.header"));
 
         sb.append("\n").append(getRestackingMessage());
-        sb.append("&7 - ").append(getClickmodeMessage());
         if (Config.getSortingEnabledGlobal()) {
             sb.append("\n").append(getSortingMessage());
-            sb.append("&7 - ").append(getSortmodeMessage());
         }
         sb.append("\n").append(getHotbarMessage());
         sb.append("\n").append(getToolsMessage());
         sb.append("\n").append(getArmorMessage());
         sb.append("\n").append(getArrowsMessage());
+        sb.append("\n").append(getClickmodeMessage());
         sb.append("\n").append(MessagesConfig.getMessage("commands.preferences.footer"));
         return sb.toString();
     }
@@ -214,11 +198,6 @@ public class PlayerPreferences implements Serializable {
     public String getSortingMessage() {
         String sortingToggle = MessageFormat.format(MessagesConfig.getMessage("preferences.sorting-toggle"), MessagesConfig.getMessage(sortingEnabled ? "preferences.enabled" : "preferences.disabled"));
         return MessageFormat.format(MessagesConfig.getMessage("commands.preferences.sorting"), sortingToggle);
-    }
-
-    public String getSortmodeMessage() {
-        String sortModeToggle = MessageFormat.format(MessagesConfig.getMessage("preferences.sortmode-toggle"), MessagesConfig.getMessage(sortMode.messageKey()));
-        return MessageFormat.format(MessagesConfig.getMessage("commands.preferences.sortmode"), sortModeToggle);
     }
 
     public String getHotbarMessage() {
@@ -263,14 +242,6 @@ public class PlayerPreferences implements Serializable {
 
     public void setSortingEnabled(boolean sortingEnabled) {
         this.sortingEnabled = sortingEnabled;
-    }
-
-    public SortMode getSortMode() {
-        return sortMode;
-    }
-
-    public void setSortMode(SortMode sortMode) {
-        this.sortMode = sortMode;
     }
 
     public boolean isMoveFromHotbar() {

@@ -16,7 +16,6 @@ public class MetricsService {
         // Enabled vs Disabled
         // Sorting Enabled vs Disabled
         // Click Mode
-        // Sort Mode
         // Hotbar
         // Tools & Weapons
         // Armor

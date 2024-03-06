@@ -290,7 +290,7 @@ public class ClickBlockListener implements Listener {
         // Stack items together
         List<ItemStack> sortedItems = stackify(Arrays.stream(inventory.getStorageContents()).toList());
 
-        // Sort by name // TODO: Use sort-mode from player preferences
+        // Sort by name
         sortedItems.sort(Comparator.comparing(i -> i.getType().name()));
 
         // Update inventory contents

@@ -34,9 +34,6 @@ sorting-enabled-default: true
 # shift-right | shift-left
 click-mode-default: shift-right
 
-# name | id | group
-sort-mode-default: name
-
 move-from-hotbar-default: true
 
 move-tools-default: false

@@ -209,13 +209,7 @@ public class Config {
      * @return PlayerPreferences
      */
     public static PlayerPreferences getDefaultPlayerPreferences() {
-        PlayerPreferences.SortMode defaultSortMode = PlayerPreferences.SortMode.NAME;
         PlayerPreferences.ClickMode defaultClickMode = PlayerPreferences.ClickMode.SHIFT_RIGHT;
-        try {
-            defaultSortMode = PlayerPreferences.SortMode.valueOf(config.getString("sort-mode-default", "name").toUpperCase());
-        } catch (IllegalArgumentException e) {
-            ChestRestack.log(Level.WARNING, "Config option sort-mode-default is badly formatted. Defaulting to sorting by name.");
-        }
         try {
             defaultClickMode = PlayerPreferences.ClickMode.valueOf(config.getString("click-mode-default", "shift-right").replace("-", "_").toUpperCase());
         } catch (IllegalArgumentException e) {
@@ -225,7 +219,6 @@ public class Config {
                 true,
                 defaultClickMode,
                 config.getBoolean("sorting-enabled-default", true),
-                defaultSortMode,
                 config.getBoolean("move-from-hotbar-default", true),
                 config.getBoolean("move-tools-default", false),
                 config.getBoolean("move-armor-default", false),

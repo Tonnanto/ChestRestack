@@ -17,8 +17,8 @@ import java.util.*;
 public class PreferencesCommand extends ChestRestackCommand {
     @Unmodifiable
     private static final List<ChestRestackCommand> COMMANDS = ImmutableList.of(
-            new SortingCommand(),
             new ClickModeCommand(),
+            new SortingCommand(),
             new MoveFromHotbarCommand(),
             new MoveToolsCommand(),
             new MoveArmorCommand(),
@@ -53,7 +53,6 @@ public class PreferencesCommand extends ChestRestackCommand {
 
         if (Config.getSortingEnabledGlobal()) {
             possible.add("sorting");
-            possible.add("sortmode");
         }
 
         possible.add("armor");
