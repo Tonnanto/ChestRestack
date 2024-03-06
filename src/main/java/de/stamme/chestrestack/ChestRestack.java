@@ -80,6 +80,7 @@ public final class ChestRestack extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
         HandlerList.unregisterAll(getPlugin());
+        ServerInfo.save();
     }
 
     /**

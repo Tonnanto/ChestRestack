@@ -60,6 +60,7 @@ public class PreferencesCommand extends ChestRestackCommand {
         possible.add("tools");
         possible.add("hotbar");
         possible.add("clickmode");
+        possible.add("reset");
 
         suggestByParameter(possible.stream(), suggestions, params.get(params.size() - 1));
     }

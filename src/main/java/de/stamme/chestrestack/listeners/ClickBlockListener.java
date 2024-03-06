@@ -1,6 +1,7 @@
 package de.stamme.chestrestack.listeners;
 
 import de.stamme.chestrestack.ChestRestack;
+import de.stamme.chestrestack.ServerInfo;
 import de.stamme.chestrestack.model.PlayerPreferences;
 import de.stamme.chestrestack.config.Config;
 import de.stamme.chestrestack.model.RestackResult;
@@ -62,13 +63,16 @@ public class ClickBlockListener implements Listener {
         }
 
         // Play sound
-        if (Config.getRestackSound() && result != null && result.numberOfItemsMoved() > 0) {
+        if (Config.getRestackSoundEnabled() && result != null && result.numberOfItemsMoved() > 0) {
             player.playSound(player.getLocation(), Sound.ITEM_BUNDLE_INSERT, 1, 1);
         }
 
-        // Send a message to player based on the restack result
         if (result != null) {
+            // Send a message to player based on the restack result
             ChestRestack.sendActionMessage(player, result.getMessage());
+
+            // Register result for Server statistics
+            ServerInfo.getInstance().logRestackResult(result);
         }
     }
 

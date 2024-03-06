@@ -199,7 +199,7 @@ public class Config {
      *
      * @return boolean
      */
-    public static boolean getRestackSound() {
+    public static boolean getRestackSoundEnabled() {
         return config.getBoolean("restack-sound", true);
     }
 
