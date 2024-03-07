@@ -31,7 +31,7 @@ import java.util.logging.Level;
 public final class ChestRestack extends JavaPlugin {
     private static ChestRestack plugin;
     private static String userdataPath;
-    private static final int spigotMCID = 87972; // TODO Adjust!
+    private static final int spigotMCID = 115472;
     private final HashMap<UUID, PlayerPreferences> playerPreferences = new HashMap<>();
 
     @Override

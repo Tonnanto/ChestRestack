@@ -5,11 +5,11 @@ A plugin for Spigot servers that allows players to move items into their chests 
 Author: Tonnanto  
 Current Version: 1.0
 
-Download the plugin and find the Project Page on [SpigotMC](https://www.spigotmc.org/resources/chestrestack/) and [Bukkit](https://dev.bukkit.org/projects/chestrestack).
+Download the plugin and find the Project Page on [SpigotMC](https://www.spigotmc.org/resources/chestrestack.115472/) and [Bukkit](https://dev.bukkit.org/projects/chestrestack).
 
 ## How it works
 
-### Shift-click a chest.
+### Shift-click a chest
 Its dead simple. 
 Shift-left click on a chest, and all items from your inventory that are already present in the chest will be moved into the chest. 
 You do not have to open the chest, nor your inventory.

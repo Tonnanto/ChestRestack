@@ -2,7 +2,7 @@ name: ChestRestack
 version: '${version}'
 main: de.stamme.chestrestack.ChestRestack
 description: Lets you shift-click on chests to move items
-website: https://www.spigotmc.org/resources/87972/ # TODO: ADJUST ID
+website: https://www.spigotmc.org/resources/115472/
 api-version: '1.20'
 
 commands:
