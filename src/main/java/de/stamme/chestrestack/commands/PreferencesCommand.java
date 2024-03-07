@@ -20,10 +20,12 @@ public class PreferencesCommand extends ChestRestackCommand {
             new ClickModeCommand(),
             new SortingCommand(),
             new MoveFromHotbarCommand(),
-            new MoveToolsCommand(),
-            new MoveArmorCommand(),
-            new MoveArrowsCommand(),
-            new ResetPreferencesCommand()
+            new ResetPreferencesCommand(),
+            new ItemPreferenceCommand(PlayerPreferences.ItemPreference.TOOLS),
+            new ItemPreferenceCommand(PlayerPreferences.ItemPreference.ARMOR),
+            new ItemPreferenceCommand(PlayerPreferences.ItemPreference.ARROWS),
+            new ItemPreferenceCommand(PlayerPreferences.ItemPreference.FOOD),
+            new ItemPreferenceCommand(PlayerPreferences.ItemPreference.POTIONS)
     );
 
     @NotNull
@@ -64,9 +66,10 @@ public class PreferencesCommand extends ChestRestackCommand {
             possible.add("sorting");
         }
 
-        possible.add("armor");
-        possible.add("arrows");
-        possible.add("tools");
+        for (PlayerPreferences.ItemPreference itemPreference : PlayerPreferences.ItemPreference.values()) {
+            possible.add(itemPreference.toString());
+        }
+
         possible.add("hotbar");
         possible.add("clickmode");
         possible.add("reset");
@@ -102,7 +105,6 @@ public class PreferencesCommand extends ChestRestackCommand {
 
     private void onShowPreferences(ChestRestack plugin, Player player) {
         PlayerPreferences preferences = plugin.getPlayerPreference(player.getUniqueId());
-
         ChestRestack.sendRawMessage(player, preferences.getMessage());
     }
 }

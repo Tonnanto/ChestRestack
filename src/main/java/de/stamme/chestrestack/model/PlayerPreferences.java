@@ -15,7 +15,6 @@ import java.util.zip.GZIPOutputStream;
 import de.stamme.chestrestack.ChestRestack;
 import de.stamme.chestrestack.config.Config;
 import de.stamme.chestrestack.config.MessagesConfig;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.util.io.BukkitObjectInputStream;
@@ -23,7 +22,7 @@ import org.bukkit.util.io.BukkitObjectOutputStream;
 
 public class PlayerPreferences implements Serializable {
     @Serial
-    private static final long serialVersionUID = 420L;
+    private static final long serialVersionUID = 4201L;
 
     public enum ClickMode {
         SHIFT_LEFT, SHIFT_RIGHT;
@@ -38,22 +37,37 @@ public class PlayerPreferences implements Serializable {
         }
     }
 
+    public enum ItemPreference {
+        TOOLS, ARMOR, ARROWS, FOOD, POTIONS;
+
+        @Override
+        public String toString() {
+            return name().replace("_", "-").toLowerCase();
+        }
+
+        public String messageKey() {
+            return String.format("commands.preferences.%s", this);
+        }
+    }
+
     private boolean enabled;
     private ClickMode clickMode;
     private boolean sortingEnabled;
     private boolean moveFromHotbar;
-    private boolean moveTools;
-    private boolean moveArmor;
-    private boolean moveArrows;
+    private final Map<ItemPreference, Boolean> itemPreferences;
 
-    public PlayerPreferences(boolean enabled, ClickMode clickMode, boolean sortingEnabled, boolean moveFromHotbar, boolean moveTools, boolean moveArmor, boolean moveArrows) {
+    public PlayerPreferences(boolean enabled, ClickMode clickMode, boolean sortingEnabled, boolean moveFromHotbar, boolean moveTools, boolean moveArmor, boolean moveArrows, boolean moveFood, boolean movePotions) {
         this.enabled = enabled;
         this.clickMode = clickMode;
         this.sortingEnabled = sortingEnabled;
         this.moveFromHotbar = moveFromHotbar;
-        this.moveTools = moveTools;
-        this.moveArmor = moveArmor;
-        this.moveArrows = moveArrows;
+        this.itemPreferences = new HashMap<>(Map.of(
+                ItemPreference.TOOLS, moveTools,
+                ItemPreference.ARMOR, moveArmor,
+                ItemPreference.ARROWS, moveArrows,
+                ItemPreference.FOOD, moveFood,
+                ItemPreference.POTIONS, movePotions
+        ));
     }
 
     /**
@@ -113,51 +127,55 @@ public class PlayerPreferences implements Serializable {
 
         PlayerPreferences preferences = PlayerPreferences.loadData(filepath);
 
-        if (preferences != null) {
+        if (preferences != null && preferences.itemPreferences != null) {
             ChestRestack.getPlugin().getPlayerPreferences().put(player.getUniqueId(), preferences);
             ChestRestack.log(Level.INFO, "PlayerPreferences loaded: " + player.getName()); // TODO: We don't really need this log
-
             return true;
         } else {
             ChestRestack.log(Level.WARNING, "Could not load PlayerPreferences from file. Creating new PlayerPreferences.");
+            return false;
         }
-
-        return false;
     }
 
     public Set<Material> getMaterialsToNotMove() {
         Set<Material> materials = new HashSet<>();
-
-        if (!isMoveTools())
-            materials.addAll(toolsToNotMove);
-        if (!isMoveArmor())
-            materials.addAll(armorToNotMove);
-        if (!isMoveArrows())
-            materials.addAll(arrowsToNotMove);
-
+        for (Map.Entry<ItemPreference, Boolean> entry : itemPreferences.entrySet()) {
+            if (!entry.getValue()) {
+                materials.addAll(itemsNotToMove.get(entry.getKey()));
+            }
+        }
         return materials;
     }
 
-    public static Set<Material> toolsToNotMove = Set.of(
-            Material.WOODEN_SWORD, Material.STONE_SWORD, Material.IRON_SWORD, Material.GOLDEN_SWORD, Material.DIAMOND_SWORD, Material.NETHERITE_SWORD,
-            Material.WOODEN_AXE, Material.STONE_AXE, Material.IRON_AXE, Material.GOLDEN_AXE, Material.DIAMOND_AXE, Material.NETHERITE_AXE,
-            Material.WOODEN_PICKAXE, Material.STONE_PICKAXE, Material.IRON_PICKAXE, Material.GOLDEN_PICKAXE, Material.DIAMOND_PICKAXE, Material.NETHERITE_PICKAXE,
-            Material.WOODEN_SHOVEL, Material.STONE_SHOVEL, Material.IRON_SHOVEL, Material.GOLDEN_SHOVEL, Material.DIAMOND_SHOVEL, Material.NETHERITE_SHOVEL,
-            Material.WOODEN_HOE, Material.STONE_HOE, Material.IRON_HOE, Material.GOLDEN_HOE, Material.DIAMOND_HOE, Material.NETHERITE_HOE,
-            Material.BOW, Material.CROSSBOW, Material.TOTEM_OF_UNDYING, Material.TRIDENT, Material.SHIELD, Material.FLINT_AND_STEEL, Material.SHEARS, Material.FISHING_ROD,
-            Material.CLOCK, Material.COMPASS, Material.RECOVERY_COMPASS, Material.LEAD, Material.CARROT_ON_A_STICK, Material.BRUSH, Material.ELYTRA, Material.WARPED_FUNGUS_ON_A_STICK
-    );
-
-    public static Set<Material> armorToNotMove = Set.of(
-            Material.LEATHER_HELMET, Material.CHAINMAIL_HELMET, Material.IRON_HELMET, Material.GOLDEN_HELMET, Material.DIAMOND_HELMET, Material.NETHERITE_HELMET,
-            Material.LEATHER_CHESTPLATE, Material.CHAINMAIL_CHESTPLATE, Material.IRON_CHESTPLATE, Material.GOLDEN_CHESTPLATE, Material.DIAMOND_CHESTPLATE, Material.NETHERITE_CHESTPLATE,
-            Material.LEATHER_LEGGINGS, Material.CHAINMAIL_LEGGINGS, Material.IRON_LEGGINGS, Material.GOLDEN_LEGGINGS, Material.DIAMOND_LEGGINGS, Material.NETHERITE_LEGGINGS,
-            Material.LEATHER_BOOTS, Material.CHAINMAIL_BOOTS, Material.IRON_BOOTS, Material.GOLDEN_BOOTS, Material.DIAMOND_BOOTS, Material.NETHERITE_BOOTS,
-            Material.TURTLE_HELMET, Material.ELYTRA, Material.SHIELD
-    );
-
-    public static Set<Material> arrowsToNotMove = Set.of(
-            Material.ARROW, Material.SPECTRAL_ARROW, Material.TIPPED_ARROW, Material.FIREWORK_ROCKET
+    public static Map<ItemPreference, Set<Material>> itemsNotToMove = Map.of(
+            ItemPreference.TOOLS, Set.of(
+                    Material.WOODEN_SWORD, Material.STONE_SWORD, Material.IRON_SWORD, Material.GOLDEN_SWORD, Material.DIAMOND_SWORD, Material.NETHERITE_SWORD,
+                    Material.WOODEN_AXE, Material.STONE_AXE, Material.IRON_AXE, Material.GOLDEN_AXE, Material.DIAMOND_AXE, Material.NETHERITE_AXE,
+                    Material.WOODEN_PICKAXE, Material.STONE_PICKAXE, Material.IRON_PICKAXE, Material.GOLDEN_PICKAXE, Material.DIAMOND_PICKAXE, Material.NETHERITE_PICKAXE,
+                    Material.WOODEN_SHOVEL, Material.STONE_SHOVEL, Material.IRON_SHOVEL, Material.GOLDEN_SHOVEL, Material.DIAMOND_SHOVEL, Material.NETHERITE_SHOVEL,
+                    Material.WOODEN_HOE, Material.STONE_HOE, Material.IRON_HOE, Material.GOLDEN_HOE, Material.DIAMOND_HOE, Material.NETHERITE_HOE,
+                    Material.BOW, Material.CROSSBOW, Material.TOTEM_OF_UNDYING, Material.TRIDENT, Material.SHIELD, Material.FLINT_AND_STEEL, Material.SHEARS, Material.FISHING_ROD,
+                    Material.CLOCK, Material.COMPASS, Material.RECOVERY_COMPASS, Material.LEAD, Material.CARROT_ON_A_STICK, Material.BRUSH, Material.ELYTRA, Material.WARPED_FUNGUS_ON_A_STICK
+            ),
+            ItemPreference.ARMOR, Set.of(
+                    Material.LEATHER_HELMET, Material.CHAINMAIL_HELMET, Material.IRON_HELMET, Material.GOLDEN_HELMET, Material.DIAMOND_HELMET, Material.NETHERITE_HELMET,
+                    Material.LEATHER_CHESTPLATE, Material.CHAINMAIL_CHESTPLATE, Material.IRON_CHESTPLATE, Material.GOLDEN_CHESTPLATE, Material.DIAMOND_CHESTPLATE, Material.NETHERITE_CHESTPLATE,
+                    Material.LEATHER_LEGGINGS, Material.CHAINMAIL_LEGGINGS, Material.IRON_LEGGINGS, Material.GOLDEN_LEGGINGS, Material.DIAMOND_LEGGINGS, Material.NETHERITE_LEGGINGS,
+                    Material.LEATHER_BOOTS, Material.CHAINMAIL_BOOTS, Material.IRON_BOOTS, Material.GOLDEN_BOOTS, Material.DIAMOND_BOOTS, Material.NETHERITE_BOOTS,
+                    Material.TURTLE_HELMET, Material.ELYTRA, Material.SHIELD
+            ),
+            ItemPreference.ARROWS, Set.of(
+                    Material.ARROW, Material.SPECTRAL_ARROW, Material.TIPPED_ARROW, Material.FIREWORK_ROCKET
+            ),
+            ItemPreference.FOOD, Set.of(
+                    Material.ENCHANTED_GOLDEN_APPLE, Material.GOLDEN_APPLE, Material.GOLDEN_CARROT,
+                    Material.COOKED_BEEF, Material.COOKED_CHICKEN, Material.COOKED_COD, Material.COOKED_MUTTON, Material.COOKED_PORKCHOP, Material.COOKED_RABBIT, Material.COOKED_SALMON,
+                    Material.BREAD, Material.BAKED_POTATO, Material.BEETROOT_SOUP, Material.MUSHROOM_STEW, Material.RABBIT_STEW, Material.SUSPICIOUS_STEW,
+                    Material.CHORUS_FRUIT, Material.DRIED_KELP, Material.COOKIE
+            ),
+            ItemPreference.POTIONS, Set.of(
+                    Material.POTION, Material.SPLASH_POTION, Material.LINGERING_POTION
+            )
     );
 
     public static String filePathForUUID(UUID id) {
@@ -177,9 +195,9 @@ public class PlayerPreferences implements Serializable {
             sb.append("\n").append(getSortingMessage());
         }
         sb.append("\n").append(getHotbarMessage());
-        sb.append("\n").append(getToolsMessage());
-        sb.append("\n").append(getArmorMessage());
-        sb.append("\n").append(getArrowsMessage());
+        for (ItemPreference itemPreference : ItemPreference.values()) {
+            sb.append("\n").append(getItemPreferenceMessage(itemPreference));
+        }
         sb.append("\n").append(getClickmodeMessage());
         sb.append("\n").append(MessagesConfig.getMessage("commands.preferences.footer"));
         return sb.toString();
@@ -205,19 +223,9 @@ public class PlayerPreferences implements Serializable {
         return MessageFormat.format(MessagesConfig.getMessage("commands.preferences.hotbar"), hotbarToggle);
     }
 
-    public String getToolsMessage() {
-        String toolsToggle = MessageFormat.format(MessagesConfig.getMessage("preferences.tools-toggle"), MessagesConfig.getMessage(moveTools ? "preferences.enabled" : "preferences.disabled"));
-        return MessageFormat.format(MessagesConfig.getMessage("commands.preferences.tools"), toolsToggle);
-    }
-
-    public String getArmorMessage() {
-        String armorToggle = MessageFormat.format(MessagesConfig.getMessage("preferences.armor-toggle"), MessagesConfig.getMessage(moveArmor ? "preferences.enabled" : "preferences.disabled"));
-        return MessageFormat.format(MessagesConfig.getMessage("commands.preferences.armor"), armorToggle);
-    }
-
-    public String getArrowsMessage() {
-        String arrowsToggle = MessageFormat.format(MessagesConfig.getMessage("preferences.arrows-toggle"), MessagesConfig.getMessage(moveArrows ? "preferences.enabled" : "preferences.disabled"));
-        return MessageFormat.format(MessagesConfig.getMessage("commands.preferences.arrows"), arrowsToggle);
+    public String getItemPreferenceMessage(ItemPreference itemPreference) {
+        String toggle = MessageFormat.format(MessagesConfig.getMessage("preferences.item-toggle"), MessagesConfig.getMessage(itemPreferences.get(itemPreference) ? "preferences.enabled" : "preferences.disabled"), itemPreference.toString());
+        return MessageFormat.format(MessagesConfig.getMessage(itemPreference.messageKey()), toggle);
     }
 
     public boolean isEnabled() {
@@ -252,27 +260,11 @@ public class PlayerPreferences implements Serializable {
         this.moveFromHotbar = moveFromHotbar;
     }
 
-    public boolean isMoveTools() {
-        return moveTools;
+    public boolean getItemPreference(ItemPreference itemPreference) {
+        return itemPreferences.get(itemPreference);
     }
 
-    public void setMoveTools(boolean moveTools) {
-        this.moveTools = moveTools;
-    }
-
-    public boolean isMoveArmor() {
-        return moveArmor;
-    }
-
-    public void setMoveArmor(boolean moveArmor) {
-        this.moveArmor = moveArmor;
-    }
-
-    public boolean isMoveArrows() {
-        return moveArrows;
-    }
-
-    public void setMoveArrows(boolean moveArrows) {
-        this.moveArrows = moveArrows;
+    public void setItemPreference(ItemPreference itemPreference, boolean enable) {
+        itemPreferences.put(itemPreference, enable);
     }
 }

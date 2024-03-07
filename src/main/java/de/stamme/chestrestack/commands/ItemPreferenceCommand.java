@@ -2,7 +2,6 @@ package de.stamme.chestrestack.commands;
 
 import de.stamme.chestrestack.ChestRestack;
 import de.stamme.chestrestack.model.PlayerPreferences;
-import de.stamme.chestrestack.config.MessagesConfig;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -11,10 +10,13 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MoveToolsCommand extends ChestRestackCommand {
+public class ItemPreferenceCommand extends ChestRestackCommand {
 
-    protected MoveToolsCommand() {
-        super("tools");
+    private final PlayerPreferences.ItemPreference itemPreference;
+
+    protected ItemPreferenceCommand(PlayerPreferences.ItemPreference itemPreference) {
+        super(itemPreference.toString());
+        this.itemPreference = itemPreference;
     }
 
     @Override
@@ -25,10 +27,10 @@ public class MoveToolsCommand extends ChestRestackCommand {
 
         PlayerPreferences preferences = plugin.getPlayerPreference(player.getUniqueId());
 
-        // /chestrestack preferences tools ...
+        // /chestrestack preferences <item-preference> ...
         List<String> possible = new ArrayList<>();
 
-        if (preferences.isMoveTools()) {
+        if (preferences.getItemPreference(itemPreference)) {
             possible.add("false");
         } else {
             possible.add("true");
@@ -46,18 +48,18 @@ public class MoveToolsCommand extends ChestRestackCommand {
         PlayerPreferences preferences = plugin.getPlayerPreference(player.getUniqueId());
 
         if (params.isEmpty()) {
-            // Toggle movetools if no argument was given
-            enableMoveTools(!preferences.isMoveTools(), player, preferences);
+            // Toggle item preference if no argument was given
+            onItemPreferenceChanged(player, preferences, itemPreference, !preferences.getItemPreference(itemPreference));
         } else if (params.get(0).equalsIgnoreCase("true")) {
-            enableMoveTools(true, player, preferences);
+            onItemPreferenceChanged(player, preferences, itemPreference, true);
         } else if (params.get(0).equalsIgnoreCase("false")) {
-            enableMoveTools(false, player, preferences);
+            onItemPreferenceChanged(player, preferences, itemPreference, false);
         }
     }
 
-    private void enableMoveTools(boolean enable, Player player, PlayerPreferences preferences) {
-        preferences.setMoveTools(enable);
+    private void onItemPreferenceChanged(Player player, PlayerPreferences preferences, PlayerPreferences.ItemPreference itemPreference, boolean enable) {
+        preferences.setItemPreference(itemPreference, enable);
         PlayerPreferences.savePreferencesForPlayer(preferences, player);
-        ChestRestack.sendMessage(player, preferences.getToolsMessage());
+        ChestRestack.sendMessage(player, preferences.getItemPreferenceMessage(itemPreference));
     }
 }

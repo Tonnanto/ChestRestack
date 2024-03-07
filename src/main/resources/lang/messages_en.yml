@@ -22,9 +22,7 @@ preferences:
   clickmode-toggle: "[&b{0}](hover=&bClick&f to toggle run_command=/chestrestack preferences clickmode)"
   sorting-toggle: "[{0}](hover=&bClick&f to toggle run_command=/chestrestack preferences sorting)"
   hotbar-toggle: "[{0}](hover=&bClick&f to toggle run_command=/chestrestack preferences hotbar)"
-  tools-toggle: "[{0}](hover=&bClick&f to toggle run_command=/chestrestack preferences tools)"
-  armor-toggle: "[{0}](hover=&bClick&f to toggle run_command=/chestrestack preferences armor)"
-  arrows-toggle: "[{0}](hover=&bClick&f to toggle run_command=/chestrestack preferences arrows)"
+  item-toggle: "[{0}](hover=&bClick&f to toggle run_command=/chestrestack preferences {1})"
 commands:
   reload:
     success: "ChestRestack has been successfully &breloaded&f."
@@ -34,10 +32,12 @@ commands:
     restacking: "&fRestacking: {0}"
     clickmode: "&fClick Mode: &b{0}"
     sorting: "&fSorting: {0}"
-    hotbar: "&fMove items from hotbar: {0}"
-    tools: "&fMove tools and weapons: {0}"
-    armor: "&fMove armor: {0}"
-    arrows: "&fMove arrows and rockets: {0}"
+    hotbar: "&fMove Items from Hotbar: {0}"
+    tools: "&fMove Tools and Weapons: {0}"
+    armor: "&fMove Armor: {0}"
+    arrows: "&fMove Arrows and Rockets: {0}"
+    food: "&fMove Food: {0}"
+    potions: "&fMove Potions: {0}"
     footer: "\n&7Click on the preference you want to change."
   help:
     header: "&b&m+&8&m              &b ChestRestack Help Menu &8&m              &b&m+\n"

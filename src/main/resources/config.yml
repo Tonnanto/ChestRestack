@@ -38,6 +38,10 @@ move-from-hotbar-default: true
 
 move-tools-default: false
 
-move-armor-default: false
+move-armor-default: true
 
 move-arrows-default: true
+
+move-food-default: true
+
+move-potions-default: true

@@ -221,8 +221,10 @@ public class Config {
                 config.getBoolean("sorting-enabled-default", true),
                 config.getBoolean("move-from-hotbar-default", true),
                 config.getBoolean("move-tools-default", false),
-                config.getBoolean("move-armor-default", false),
-                config.getBoolean("move-arrows-default", true)
+                config.getBoolean("move-armor-default", true),
+                config.getBoolean("move-arrows-default", true),
+                config.getBoolean("move-food-default", true),
+                config.getBoolean("move-potions-default", true)
         );
     }
 }

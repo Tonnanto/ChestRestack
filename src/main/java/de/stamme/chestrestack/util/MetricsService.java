@@ -121,68 +121,27 @@ public class MetricsService {
             }
         }));
 
-
-        // tools & weapons enabled advanced pie chart
-        metrics.addCustomChart(new AdvancedPie("tools_enabled", new Callable<>() {
-            @Override
-            public Map<String, Integer> call() {
-                Map<String, Integer> valueMap = new HashMap<>();
-                valueMap.put("enabled", getPlayersWithTools(true));
-                valueMap.put("disabled", getPlayersWithTools(false));
-                return valueMap;
-            }
-
-            private int getPlayersWithTools(boolean enabled) {
-                int counter = 0;
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (ChestRestack.getPlugin().getPlayerPreference(player.getUniqueId()).isMoveTools() == enabled) {
-                        counter++;
-                    }
+        // advanced pie chart for every item preference
+        for (PlayerPreferences.ItemPreference itemPreference : PlayerPreferences.ItemPreference.values()) {
+            metrics.addCustomChart(new AdvancedPie(String.format("%s_enabled", itemPreference.toString()), new Callable<>() {
+                @Override
+                public Map<String, Integer> call() {
+                    Map<String, Integer> valueMap = new HashMap<>();
+                    valueMap.put("enabled", getPlayersWithItemPreference(true));
+                    valueMap.put("disabled", getPlayersWithItemPreference(false));
+                    return valueMap;
                 }
-                return counter;
-            }
-        }));
 
-        // armor enabled advanced pie chart
-        metrics.addCustomChart(new AdvancedPie("armor_enabled", new Callable<>() {
-            @Override
-            public Map<String, Integer> call() {
-                Map<String, Integer> valueMap = new HashMap<>();
-                valueMap.put("enabled", getPlayersWithArmor(true));
-                valueMap.put("disabled", getPlayersWithArmor(false));
-                return valueMap;
-            }
-
-            private int getPlayersWithArmor(boolean enabled) {
-                int counter = 0;
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (ChestRestack.getPlugin().getPlayerPreference(player.getUniqueId()).isMoveArmor() == enabled) {
-                        counter++;
+                private int getPlayersWithItemPreference(boolean enabled) {
+                    int counter = 0;
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        if (ChestRestack.getPlugin().getPlayerPreference(player.getUniqueId()).getItemPreference(itemPreference) == enabled) {
+                            counter++;
+                        }
                     }
+                    return counter;
                 }
-                return counter;
-            }
-        }));
-
-        // arrows & rockets enabled advanced pie chart
-        metrics.addCustomChart(new AdvancedPie("arrows_enabled", new Callable<>() {
-            @Override
-            public Map<String, Integer> call() {
-                Map<String, Integer> valueMap = new HashMap<>();
-                valueMap.put("enabled", getPlayersWithArrows(true));
-                valueMap.put("disabled", getPlayersWithArrows(false));
-                return valueMap;
-            }
-
-            private int getPlayersWithArrows(boolean enabled) {
-                int counter = 0;
-                for (Player player : Bukkit.getOnlinePlayers()) {
-                    if (ChestRestack.getPlugin().getPlayerPreference(player.getUniqueId()).isMoveArrows() == enabled) {
-                        counter++;
-                    }
-                }
-                return counter;
-            }
-        }));
+            }));
+        }
     }
 }
