@@ -33,7 +33,7 @@ public class HelpCommand extends ChestRestackCommand {
         sb.append("\n").append(MessagesConfig.getMessage("commands.help.header"));
 
         // General description
-        sb.append(MessageFormat.format(MessagesConfig.getMessage("commands.help.info"), preferences.getClickMode().toString()));
+        sb.append(MessageFormat.format(MessagesConfig.getMessage("commands.help.info"), MessagesConfig.getMessage(preferences.getClickMode().messageKey())));
 
         // Status (enabled / disabled) (sorting enabled / disabled)
         sb.append("\n\n");
