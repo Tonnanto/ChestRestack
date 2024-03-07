@@ -32,6 +32,7 @@ commands:
     restacking: "&fRestacken: {0}"
     clickmode: "&fKlick-Modus: &b{0}"
     sorting: "&fSortieren: {0}"
+    sorting-disabled-globally: "Sortieren mit ChestRestack wurde auf diesem Server &cdeaktiviert&f."
     hotbar: "&fItems aus der Hotbar verschieben: {0}"
     tools: "&fWerkzeuge und Waffen verschieben: {0}"
     armor: "&fRüstung verschieben: {0}"

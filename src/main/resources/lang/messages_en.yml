@@ -32,6 +32,7 @@ commands:
     restacking: "&fRestacking: {0}"
     clickmode: "&fClick Mode: &b{0}"
     sorting: "&fSorting: {0}"
+    sorting-disabled-globally: "Sorting with ChestRestack has been &cdisabled&f on this server."
     hotbar: "&fMove Items from Hotbar: {0}"
     tools: "&fMove Tools and Weapons: {0}"
     armor: "&fMove Armor: {0}"

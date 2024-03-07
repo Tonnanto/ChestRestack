@@ -46,7 +46,7 @@ public class SortingCommand extends ChestRestackCommand {
         PlayerPreferences preferences = plugin.getPlayerPreference(player.getUniqueId());
 
         if (!Config.getSortingEnabledGlobal()) {
-            ChestRestack.sendMessage(sender, MessagesConfig.getMessage("commands.sorting.disabled-globally"));
+            ChestRestack.sendMessage(sender, MessagesConfig.getMessage("commands.preferences.sorting-disabled-globally"));
             return;
         }
 
