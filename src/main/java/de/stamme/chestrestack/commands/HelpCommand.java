@@ -49,18 +49,20 @@ public class HelpCommand extends ChestRestackCommand {
         sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-sorting-info"));
         sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-clickmode-command"));
         sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-clickmode-info"));
-        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-tools-command"));
-        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-tools-info"));
-        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-armor-command"));
-        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-armor-info"));
-        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-arrows-command"));
-        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-arrows-info"));
         sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-reset-command"));
         sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-reset-info"));
 
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-itemprefs-command"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-itemprefs-info"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-tools-info"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-armor-info"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-arrows-info"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-food-info"));
+        sb.append("\n").append(MessagesConfig.getMessage("commands.help.preferences-potions-info"));
+
         if (sender.hasPermission("chestrestack.admin.reload")) {
-            sb.append(MessagesConfig.getMessage("commands.help.reload-command"));
-            sb.append(MessagesConfig.getMessage("commands.help.reload-info"));
+            sb.append("\n").append(MessagesConfig.getMessage("commands.help.reload-command"));
+            sb.append("\n").append(MessagesConfig.getMessage("commands.help.reload-info"));
         }
 
         sb.append("\n");
