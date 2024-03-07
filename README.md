@@ -30,6 +30,19 @@ These preferences include the following:
 - Should shift-right or shift-left click trigger the functionality?
 - Or should the feature be disabled entirely?
 
+## Commands
+All commands for this plugin start with `/chestrestack` or its shorter aliases `/restack` or `/cr`
+- `/cr help` - Shows a Help Menu that explains the plugin and all commands
+- `/cr <disable | enable>` - Disables or enables the plugin for an individual player
+- `/cr prefs` - Show an interactive chat-menu of the player's preferences
+- `/cr prefs sorting` - Toggle whether chests should be sorted after restacking
+- `/cr prefs clickmode <shift-left | shift-right>` - Choose a click-mode for restacking
+- `/cr prefs reset` - Restore the default preferences
+- `/cr prefs <tools | armor | arrows | food | potions>` - Enable or disable restacking of certain items
+
+Admin Command:
+- `/cr reload` - reloads the plugin and its configuration.
+
 ## License
 Copyright (C) 2024, Anton Stamme
 
