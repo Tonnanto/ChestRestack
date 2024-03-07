@@ -129,7 +129,6 @@ public class PlayerPreferences implements Serializable {
 
         if (preferences != null && preferences.itemPreferences != null) {
             ChestRestack.getPlugin().getPlayerPreferences().put(player.getUniqueId(), preferences);
-            ChestRestack.log(Level.INFO, "PlayerPreferences loaded: " + player.getName()); // TODO: We don't really need this log
             return true;
         } else {
             ChestRestack.log(Level.WARNING, "Could not load PlayerPreferences from file. Creating new PlayerPreferences.");

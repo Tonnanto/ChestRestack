@@ -201,7 +201,8 @@ public class ClickBlockListener implements Listener {
             smeltMaterial = furnaceInventory.getSmelting().getType();
         }
         if (fuelMaterial == null) {
-            fuelMaterial = Material.COAL; // TODO Get preferred fuel material from config
+            // TODO Get preferred fuel material from config?
+            fuelMaterial = Material.COAL;
         }
 
 
