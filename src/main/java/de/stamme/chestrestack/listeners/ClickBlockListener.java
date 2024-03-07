@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.*;
+import org.bukkit.metadata.FixedMetadataValue;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -27,6 +28,9 @@ import static org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK;
  * Specifically, when a player shift-clicks an inventory and thus triggeres the chest restack functionality.
  */
 public class ClickBlockListener implements Listener {
+
+    public static String playLastRestackKey = "chestrestack.last_restack";
+
     @EventHandler
     public void onClickBlock(@NotNull PlayerInteractEvent event) {
 
@@ -38,6 +42,7 @@ public class ClickBlockListener implements Listener {
         // These assertions are ensured by the above ignoreEvent method
         assert event.getClickedBlock() != null;
         assert event.getClickedBlock().getState() instanceof InventoryHolder;
+
         Inventory inventory = ((InventoryHolder) event.getClickedBlock().getState()).getInventory();
         RestackResult result = null;
 
@@ -62,18 +67,31 @@ public class ClickBlockListener implements Listener {
             default: break;
         }
 
+        if (result == null) {
+            return;
+        }
+
         // Play sound
-        if (Config.getRestackSoundEnabled() && result != null && result.numberOfItemsMoved() > 0) {
+        if (Config.getRestackSoundEnabled() && result.numberOfItemsMoved() > 0) {
             player.playSound(player.getLocation(), Sound.ITEM_BUNDLE_INSERT, 1, 1);
         }
 
-        if (result != null) {
-            // Send a message to player based on the restack result
-            ChestRestack.sendActionMessage(player, result.getMessage());
-
-            // Register result for Server statistics
-            ServerInfo.getInstance().logRestackResult(result);
+        // Prevent double trigger by ignoring the result if no items have been moved, and the last restack was less than 0.5s ago
+        if (result.numberOfItemsMoved() == 0 && player.hasMetadata(playLastRestackKey) && !player.getMetadata(playLastRestackKey).isEmpty()) {
+            long lastRestackTimestamp = player.getMetadata(playLastRestackKey).get(0).asLong();
+            if (System.currentTimeMillis() - lastRestackTimestamp < 500) {
+                return;
+            }
         }
+
+        // Send a message to player based on the restack result
+        ChestRestack.sendActionMessage(player, result.getMessage());
+
+        // Set player metadata
+        player.setMetadata(playLastRestackKey, new FixedMetadataValue(ChestRestack.getPlugin(), System.currentTimeMillis()));
+
+        // Register the result for Server statistics
+        ServerInfo.getInstance().logRestackResult(result);
     }
 
     /**

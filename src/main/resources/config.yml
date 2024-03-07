@@ -31,8 +31,8 @@ check-for-updates: true
 
 sorting-enabled-default: true
 
-# shift-right | shift-left
-click-mode-default: shift-right
+# shift-left | shift-right
+click-mode-default: shift-left
 
 move-from-hotbar-default: true
 
